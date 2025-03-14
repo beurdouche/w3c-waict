@@ -1,0 +1,19 @@
+<pre class='metadata'>
+Title: Web Application Integrity Consistency Transparency
+Shortname: waict
+Level: 1
+Status: w3c/UD
+Group: WICG
+Repository: beurdouche/w3c-waict
+URL: http://example.com/url-this-spec-will-live-at
+Editor: Benjamin Beurdouche, Mozilla https://www.mozilla.org, beurdouche@mozilla.com
+Abstract: A short description of your spec, one or two sentences.
+Complain About: accidental-2119 yes, missing-example-ids yes
+Markup Shorthands: markdown yes, css no
+</pre>
+
+Introduction {#intro}
+=====================
+
+Introduction here.
+
