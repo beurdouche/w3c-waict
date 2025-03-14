@@ -7,7 +7,7 @@ Group: WICG
 Repository: beurdouche/w3c-waict
 URL: http://example.com/url-this-spec-will-live-at
 Editor: Benjamin Beurdouche, Mozilla https://www.mozilla.org, beurdouche@mozilla.com
-Abstract: A short description of your spec, one or two sentences.
+Abstract: This specification defines a standardized, browser-based mechanism to ensure web application integrity, consistency, and transparency. It aims to raise the security and privacy bar for web applications by preventing unauthorized code modifications, ensuring users receive the same code as everyone else, and promoting transparency through append-only logs of published code versions.
 Complain About: accidental-2119 yes, missing-example-ids yes
 Markup Shorthands: markdown yes, css no
 </pre>
@@ -15,5 +15,35 @@ Markup Shorthands: markdown yes, css no
 Introduction {#intro}
 =====================
 
-Introduction here.
+The Web Application Integrity, Consistency, and Transparency (WAICT) specification aims to raise the security and privacy bar for web applications by ensuring three key properties:
 
+1. **Integrity**: Preventing any unauthorized modification of site code—even if served by a third-party CDN.
+2. **Consistency**: Giving users confidence that they receive the *same* code everyone else does, eliminating the risk of user-specific malicious versions.
+3. **Transparency**: Ensuring stronger security for the consistency mechanism through append-only logs that record published code versions, deterring hidden or short-lived changes and facilitating external audits.
+
+This specification defines a standardized, browser-based mechanism that sites can easily opt into without requiring users to install extensions. It builds upon and extends existing web platform security features like Subresource Integrity (SRI) to provide comprehensive protection for security-critical applications.
+
+## Background and Motivation {#background}
+
+Security-critical web applications such as webmail, secure messaging, banking, and other sensitive sites face significant threats:
+
+* **Insider Threats**: Malicious insiders, internal bugs, or selective content modifications can compromise application security.
+* **Hosting Compromises**: Attackers or misconfigurations at hosting providers or CDNs can serve altered code to users.
+
+These threats are particularly concerning for applications implementing end-to-end encryption, where the integrity of the delivered code represents the most critical link in the security chain. While the data may be encrypted in transit and storage, compromised client-side code can undermine the entire security model.
+
+Currently, only specialized browser extensions (like CodeVerify) can provide stronger assurances beyond standard web platform security features. However, extensions require explicit user installation and consent, limiting their adoption and effectiveness as a universal solution.
+
+## Approach {#approach}
+
+This specification proposes a comprehensive approach that:
+
+1. **Leverages and extends SRI** with a manifest-based approach listing all subresources with a single signature, addressing performance concerns.
+
+2. **Introduces new HTTP headers** (possibly as an extension of Content Security Policy) to specify where browsers should fetch integrity manifests and how strictly to enforce integrity requirements.
+
+3. **Adds transparency and consistency mechanisms** through signed manifests and append-only logs, allowing sites to embed cryptographic proof of logging each manifest and enabling browsers to verify the inclusion of manifests in these logs.
+
+4. **Prevents security downgrades** by allowing domains to request that browsers reject weaker security modes for a specified time period, similar to HTTP Strict Transport Security (HSTS).
+
+By designing integrity and transparency mechanisms together, this specification aims to make the web more trustworthy, ensuring that all users can rely on security-critical sites to deliver the code they promise, consistently and visibly.
