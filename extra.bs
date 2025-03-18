@@ -1,0 +1,117 @@
+# Transparency Verification # {#transparency-verification}
+
+## Verify Transparency Signatures ## {#verify-transparency-signatures-algo}
+
+The verify transparency signatures algorithm validates cryptographic signatures in the transparency log.
+
+<div algorithm="verify-transparency-signatures">
+    To <dfn export>verify transparency signatures</dfn> for a WAICT manifest |manifest|:
+
+    1. Let |transparencyObject| be |manifest|'s `transparency` object.
+    2. If |transparencyObject| is null or undefined, return false.
+    3. Let |manifestHash| be |manifest|'s `manifest_metadata.integrity_hash`.
+    4. Let |primarySignature| be |transparencyObject|'s `signature`.
+    5. Let |primaryPublicKey| be |transparencyObject|'s `publickey`.
+    6. Let |verified| be the result of verifying |primarySignature| against |manifestHash| using |primaryPublicKey|.
+    7. If |verified| is false, return false.
+    8. Let |additionalSignatures| be |transparencyObject|'s `additional` array.
+    9. If |additionalSignatures| is not empty:
+        1. For each |additionalSignature| in |additionalSignatures|:
+            1. Let |signature| be |additionalSignature|'s `signature`.
+            2. Let |publicKey| be |additionalSignature|'s `publickey`.
+            3. Let |additionalVerified| be the result of verifying |signature| against |manifestHash| using |publicKey|.
+            4. If |additionalVerified| is false, return false.
+    10. Return true.
+</div>
+
+This ensures the authenticity of transparency log entries through cryptographic verification.
+
+## Check Transparency Log Inclusion ## {#check-transparency-log-inclusion-algo}
+
+The check transparency log inclusion algorithm verifies that a manifest is properly logged.
+
+<div algorithm="check transparency log inclusion">
+    To <dfn>check transparency log inclusion</dfn> for a WAICT manifest |manifest|:
+
+    1. Let |transparencyObject| be |manifest|'s `transparency` object.
+    2. If |transparencyObject| is null or undefined, return false.
+    3. Let |manifestHash| be |manifest|'s `manifest_metadata.integrity_hash`.
+    4. Let |inclusionProofs| be |transparencyObject|'s `inclusion_proofs` array, or an empty array if not present.
+    5. If |inclusionProofs| is empty, return the result of [=verify transparency signatures=] for |manifest|.
+    6. For each |proof| in |inclusionProofs|:
+        1. Let |logId| be |proof|'s `log_id`.
+        2. Let |proofData| be |proof|'s `proof`.
+        3. Let |logPublicKey| be the public key associated with |logId| in the browser's trusted transparency log list.
+        4. If |logPublicKey| is not found, continue to the next proof.
+        5. Let |verified| be the result of verifying |proofData| as a valid inclusion proof for |manifestHash| in the log identified by |logId| using |logPublicKey|.
+        6. If |verified| is true, return true.
+    7. Return false.
+</div>
+
+This confirms that manifests are properly recorded in transparency logs.
+
+## Enforce WAICT Transparency ## {#enforce-waict-transparency-algo}
+
+The enforce WAICT transparency algorithm applies transparency requirements based on policy.
+
+<div algorithm="enforce WAICT transparency">
+    To <dfn export>enforce WAICT transparency</dfn> for a [=document=] |document|:
+
+    1. Let |manifest| be the WAICT manifest associated with |document|.
+    2. If |manifest| is null, return.
+    3. Let |enforcementLevel| be the value of the `integrity-enforcement-level` directive in |document|'s [=CSP list=], or `"report"` if not specified.
+    4. Let |transparencyVerified| be the result of [=check transparency log inclusion=] for |manifest|.
+    5. If |transparencyVerified| is false:
+        1. If |enforcementLevel| is `"strict"`:
+            1. Block the document from loading and display a WAICT transparency error page.
+        2. If |enforcementLevel| is `"enforce"`:
+            1. Allow the document to load but display a WAICT transparency warning notification.
+        3. If |enforcementLevel| is `"report"`:
+            1. Let |request| be a new request with URL set to |document|'s URL.
+            2. Report a WAICT transparency violation for |request|, null, `"transparency"`, { document: |document|'s URL }.
+</div>
+
+This ensures proper enforcement of transparency requirements according to policy.
+
+## Periodically Verify WAICT Transparency ## {#periodically-verify-waict-transparency-algo}
+
+The periodically verify WAICT transparency algorithm maintains ongoing transparency verification.
+
+<div algorithm="periodically verify WAICT transparency">
+    To <dfn export>periodically verify WAICT transparency</dfn> for a [=document=] |document|:
+
+    1. Let |manifest| be the WAICT manifest associated with |document|.
+    2. If |manifest| is null, return.
+    3. Let |enforcementLevel| be the value of the `integrity-enforcement-level` directive in |document|'s [=CSP list=], or `"report"` if not specified.
+    4. Let |lastVerificationTime| be the timestamp of the last transparency verification for |document|, or null if this is the first verification.
+    5. If |lastVerificationTime| is not null and less than 1 hour has passed since |lastVerificationTime|, return.
+    6. Let |transparencyVerified| be the result of [=check transparency log inclusion=] for |manifest|.
+    7. Set |document|'s last transparency verification timestamp to the current time.
+    8. If |transparencyVerified| is false:
+        1. If |enforcementLevel| is `"strict"` or `"enforce"`:
+            1. Display a WAICT transparency warning notification.
+        2. If |enforcementLevel| is `"report"`:
+            1. Let |request| be a new request with URL set to |document|'s URL.
+            2. Report a WAICT transparency violation for |request|, null, `"transparency"`, { document: |document|'s URL, periodic: true }.
+</div>
+
+This maintains transparency guarantees throughout the lifetime of a document.
+
+## Transparency Log Privacy ## {#log-privacy}
+
+When implementing transparency logs, care must be taken to protect user privacy:
+
+1. Logs should only contain manifest hashes and metadata, not user-specific information.
+2. Verification of log inclusion should happen locally in the browser using cryptographic proofs.
+3. Browsers should not query transparency logs directly during normal browsing.
+
+
+# Acknowledgments # {#acknowledgments}
+
+This document builds upon work by:
+
+* Benjamin Beurdouche (Mozilla)
+* Richard Hansen (Meta)
+* Ezzudin Alkotob (Meta)
+
+And the broader Web Application Integrity, Consistency and Transparency (WAICT) effort.
