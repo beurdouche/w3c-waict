@@ -15,7 +15,6 @@ Warning: not ready
 
 <pre class="link-defaults">
 spec:dom; type:dfn; for:/; text:document
-spec:csp3; type:dfn; for:/; text:csp list
 spec:fetch; type:dfn; for:/; text:request
 spec:fetch; type:dfn; for:/; text:response
 spec:fetch; type:dfn; text:client
@@ -26,11 +25,16 @@ spec:fetch; type:dfn; for:request; text:url
 spec:fetch; type:dfn; text:main fetch
 spec:html; type:dfn; text:worker
 spec:dom; type:dfn; text:origin
+spec:fetch; type:dfn; for:headers; text:header list
 </pre>
 
 # Introduction # {#intro}
 
 This specification defines a standardized, browser-based mechanism to ensure web application integrity, consistency, and transparency. It extends the Fetch Standard to provide stronger integrity guarantees for web applications.
+
+<div class="note">
+This specification is designed to work alongside existing web security mechanisms such as Content Security Policy (CSP), Subresource Integrity (SRI), and Transport Layer Security (TLS). While these existing mechanisms provide important security properties, WAICT addresses additional threats that they do not fully mitigate.
+</div>
 
 ## Background ## {#background}
 
@@ -40,6 +44,10 @@ The Web Application Integrity, Consistency, and Transparency (WAICT) specificati
 2. **Consistency**: Giving users confidence that they receive the *same* code everyone else does, eliminating the risk of user-specific malicious versions.
 3. **Transparency**: Ensuring stronger security for the consistency mechanism through append-only logs that record published code versions, deterring hidden or short-lived changes and facilitating external audits.
 
+<div class="note">
+Unlike Subresource Integrity which only applies to specific resources with `integrity` attributes, WAICT provides site-wide protection for all resources based on a centralized manifest. This helps defend against targeted attacks where malicious code might be selectively served to specific users.
+</div>
+
 Security-critical web applications such as webmail, secure messaging, banking, and other sensitive sites face significant threats:
 
 * **Insider Threats**: Malicious insiders, internal bugs, or selective content modifications can compromise application security.
@@ -48,9 +56,121 @@ Security-critical web applications such as webmail, secure messaging, banking, a
 
 These threats are particularly concerning for applications implementing end-to-end encryption, where the integrity of the delivered code represents the most critical link in the security chain. While the data may be encrypted in transit and storage, compromised client-side code can undermine the entire security model.
 
+# WAICT Header # {#waict-header}
+
+## Header Definition ## {#header-definition}
+
+The WAICT specification defines a new HTTP header, `WAICT`, which carries directives that enforce web application integrity, consistency, and transparency.
+
+The WAICT header syntax follows a format similar to other HTTP security headers, with semicolon-separated directives:
+
+```
+WAICT: directive1=value1; directive2=value2; directive3
+```
+
+Multiple WAICT headers in a response are combined into a single policy by joining their directives.
+
+<div class="note">
+The WAICT header is designed as a standalone security header rather than extending CSP to maintain a clear separation of concerns. While CSP focuses on preventing content injection attacks, WAICT addresses the separate concern of ensuring application integrity.
+</div>
+
+A `WAICT-Report-Only` header is also defined, which reports violations without enforcing them, allowing sites to test WAICT policies before enforcement.
+
+## WAICT Directives ## {#waict-directives}
+
+The WAICT header supports the following directives:
+
+### Manifest Directives ### {#waict-manifest-directives}
+
+integrity-manifest-src
+- **'url'**: The URL where the browser can fetch metadata about the manifest
+- Example: `integrity-manifest-src=https://example.com/manifest.json`
+
+<div class="note">
+The manifest URL should be served from the same origin as the protected content when possible. If it must be served from a different origin, that origin should have strong security controls.
+</div>
+
+integrity-manifest-hash
+- **'hash'**: The hex encoded hash of the manifest
+- Example: `integrity-manifest-hash=sha256-abcdef123456...`
+
+<div class="advisement">
+The hash of the manifest is critical for establishing the root of trust. Without this value, an attacker could potentially serve a modified manifest that would allow malicious resources to pass verification.
+</div>
+
+### Enforcement Level Directives ### {#waict-enforcement-level-directives}
+
+<div class="note">
+Sites should choose enforcement levels based on their security requirements and tolerance for false positives. Critical applications handling sensitive data should prefer strict enforcement for scripts and static content.
+</div>
+
+integrity-level-strict
+- Takes a comma-separated list of resource types
+- Resources of these types will not be loaded/unlocked into the page until they pass the integrity check
+- Example: `integrity-level-strict=static,script`
+
+integrity-level-enforce
+- Takes a comma-separated list of resource types
+- Resources of these types will be loaded but with notifications sent to users about check status
+- Example: `integrity-level-enforce=style,binary`
+
+integrity-level-report
+- Takes a comma-separated list of resource types
+- Resources of these types will be loaded with notifications only sent to developers
+- Example: `integrity-level-report=script,media`
+
+### Resource Types ### {#waict-resource-types}
+
+<div class="example">
+A typical deployment might start with report-only mode for all resource types, then gradually increase enforcement, starting with less critical resources like images and styles, and finally applying strict enforcement to scripts and documents.
+</div>
+
+The following resource types are supported:
+
+- **'script'**: JavaScript files, workers, and other executable code
+- **'style'**: CSS stylesheets
+- **'static'**: HTML documents, iframes, and frames
+- **'binary'**: WASM, images, fonts, media files, etc.
+
+### Additional Directives ### {#waict-additional-directives}
+
+integrity-enforcement-time
+- **not-before=timestamp**: The timestamp for the beginning of enforcement
+- **not-after=timestamp**: The timestamp for the end of enforcement
+- Example: `integrity-enforcement-time=not-before=2023-01-01T00:00:00Z,not-after=2023-12-31T23:59:59Z`
+
+integrity-report-uri
+- **'url'**: The URL where violation reports will be sent
+- Example: `integrity-report-uri=https://example.com/waict-report`
+
+### Optional Directives ### {#waict-optional-directives}
+
+integrity-page-hash
+- **'hash'**: The hash of the page
+- Avoids the roundtrip to get the manifest for resources bundled in the initial load
+- Example: `integrity-page-hash=sha256-abcdef123456...`
+
+integrity-resource-origin
+- **'self'**: All resources from the manifest must be loaded from the same origin as the site
+- **'remote-allowed'**: Some sub-resources in the manifest can be loaded from different origins
+- Example: `integrity-resource-origin=self`
+
+integrity-package-separator
+- **'delimiter'**: Value used to delimit packages in bundled resources
+- Example: `integrity-package-separator=-----PACKAGE_BOUNDARY-----`
+
+integrity-max-age
+- **seconds**: Duration in seconds that browsers should remember a site's WAICT policy
+- Used primarily for downgrade protection
+- Example: `integrity-max-age=86400`
+
 # Initial request # {#initial-request}
 
 ## Process WAICT Manifest ## {#process-waict-manifest}
+
+<div class="note">
+The manifest processing occurs during the initial page load, after the document has been parsed but before subresources are loaded. This ensures that integrity checks can be applied to all subresources without delaying the initial HTML parsing.
+</div>
 
 The process WAICT manifest algorithm takes a document and processes its WAICT manifest, validating integrity and storing enforcement settings.
 
@@ -58,38 +178,44 @@ The process WAICT manifest algorithm takes a document and processes its WAICT ma
     To <dfn export>process a WAICT manifest</dfn> for a [=document=] |document|:
 
     1. Let |manifest| be null.
-    2. If |document|'s [=CSP list=] contains a directive named `integrity-manifest-src`:
+    2. Let |waictHeaders| be the WAICT headers present in the response that delivered |document|.
+    3. If |waictHeaders| contains a directive named `integrity-manifest-src`:
         1. Let |manifestSrc| be the value of that directive.
         2. If |manifestSrc| is a URL:
             1. Fetch |manifestSrc| and set |manifest| to the response body parsed as JSON.
         3. Otherwise:
             1. Look for a `<script type="application/json" name="integrity-page-manifest">` element in |document|.
             2. If found, set |manifest| to its text content parsed as JSON.
-    3. If |manifest| is null, return.
-    4. Let |expectedHash| be the value of the `integrity-manifest-hash` directive in |document|'s [=CSP list=].
-    5. Let |actualHash| be the result of computing a SHA-256 hash over the stringified |manifest|.
-    6. If |expectedHash| does not match |actualHash|:
+    4. If |manifest| is null, return.
+    5. Let |expectedHash| be the value of the `integrity-manifest-hash` directive in |waictHeaders|.
+    6. Let |actualHash| be the result of computing a SHA-256 hash over the stringified |manifest|.
+    7. If |expectedHash| does not match |actualHash|:
         1. Let |request| be a new request with URL set to |document|'s URL.
         2. Report a WAICT manifest integrity error for |request|, null, `"manifest-integrity"`, { expected: |expectedHash|, actual: |actualHash| }.
         3. Abort these steps.
-    7. Let |enforcementConfig| be a new empty object.
-    8. For each |resourceType| in the `integrity-level-strict` directive in |document|'s [=CSP list=]:
+    8. Let |enforcementConfig| be a new empty object.
+    9. For each |resourceType| in the `integrity-level-strict` directive in |waictHeaders|:
         1. Set |enforcementConfig|[|resourceType|] to `"strict"`.
-    9. For each |resourceType| in the `integrity-level-enforce` directive in |document|'s [=CSP list=]:
+    10. For each |resourceType| in the `integrity-level-enforce` directive in |waictHeaders|:
         1. If |enforcementConfig|[|resourceType|] is not already set:
             1. Set |enforcementConfig|[|resourceType|] to `"enforce"`.
-    10. For each |resourceType| in the `integrity-level-report` directive in |document|'s [=CSP list=]:
+    11. For each |resourceType| in the `integrity-level-report` directive in |waictHeaders|:
         1. If |enforcementConfig|[|resourceType|] is not already set:
             1. Set |enforcementConfig|[|resourceType|] to `"report"`.
-    11. Let |enforcementTimeStart| and |enforcementTimeEnd| be the values from the `integrity-enforcement-time` directive in |document|'s [=CSP list=], or null if not specified.
-    12. If |enforcementTimeStart| is not null and the current time is before |enforcementTimeStart|:
+    12. Let |enforcementTimeDirective| be the value of the `integrity-enforcement-time` directive in |waictHeaders|.
+    13. Let |enforcementTimeStart| and |enforcementTimeEnd| be null.
+    14. If |enforcementTimeDirective| contains a `not-before` parameter:
+        1. Set |enforcementTimeStart| to the timestamp value of that parameter.
+    15. If |enforcementTimeDirective| contains a `not-after` parameter:
+        1. Set |enforcementTimeEnd| to the timestamp value of that parameter.
+    16. If |enforcementTimeStart| is not null and the current time is before |enforcementTimeStart|:
         1. For each |type| in |enforcementConfig|:
             1. Set |enforcementConfig|[|type|] to `"report"`.
-    13. If |enforcementTimeEnd| is not null and the current time is after |enforcementTimeEnd|:
+    17. If |enforcementTimeEnd| is not null and the current time is after |enforcementTimeEnd|:
         1. For each |type| in |enforcementConfig|:
             1. Set |enforcementConfig|[|type|] to `"report"`.
-    14. Store |manifest| and |enforcementConfig| in |document|'s WAICT state.
-    15. If |manifest| contains a `transparency` object:
+    18. Store |manifest| and |enforcementConfig| in |document|'s WAICT state.
+    19. If |manifest| contains a `transparency` object:
         1. Let |transparencyVerified| be the result of running [=verify transparency signatures=] for |manifest|.
         2. If |transparencyVerified| is false:
             1. Let |request| be a new request with URL set to |document|'s URL.
@@ -99,6 +225,10 @@ The process WAICT manifest algorithm takes a document and processes its WAICT ma
 After processing, the manifest's integrity is verified and enforcement settings are stored for use in subsequent resource checks.
 
 ## Verify WAICT Integrity ## {#verify-waict-integrity-algo}
+
+<div class="note">
+For performance reasons, implementations may choose to verify resources asynchronously in non-strict enforcement modes. However, in strict mode, resources must be verified before they are delivered to the page to maintain the security guarantee.
+</div>
 
 The verify WAICT integrity algorithm checks if a resource's content matches its declared hash in the WAICT manifest.
 
@@ -124,8 +254,9 @@ The verify WAICT integrity algorithm checks if a resource's content matches its 
     12. Let |enforcementLevel| be |enforcementConfig|[|resourceType|].
     13. Let |resourceBody| be |response|'s [=body=].
     14. Let |actualHash| be the result of computing a SHA-256 hash over |resourceBody|.
-    15. Let |packageDelimiter| be the value of the `integrity-package-separator` directive in |document|'s [=CSP list=], or null if not specified.
-    16. If |packageDelimiter| is not null:
+    15. Let |waictHeaders| be the WAICT headers present in the response that delivered |document|.
+    16. Let |packageDelimiter| be the value of the `integrity-package-separator` directive in |waictHeaders|, or null if not specified.
+    17. If |packageDelimiter| is not null:
         1. Split |resourceBody| by |packageDelimiter| into |packages|.
         2. For each |package| in |packages|:
             1. Let |packageHash| be the result of computing a SHA-256 hash over |package|.
@@ -134,7 +265,7 @@ The verify WAICT integrity algorithm checks if a resource's content matches its 
                 2. Report a WAICT integrity violation for |request|'s [=url=], |response|, `"resource-integrity"`, { hash: |packageHash| }.
                 3. If |enforcementLevel| is `"report"`, continue.
         3. Return true.
-    17. Otherwise:
+    18. Otherwise:
         1. If |actualHash| is not in |manifest|'s `manifest` array:
             1. If |enforcementLevel| is `"strict"` or `"enforce"`, return false.
             2. Report a WAICT integrity violation for |request|'s [=url=], |response|, `"resource-integrity"`, { hash: |actualHash| }.
@@ -143,11 +274,19 @@ The verify WAICT integrity algorithm checks if a resource's content matches its 
         2. Return true.
 </div>
 
+<div class="advisement">
+Implementations must ensure that the hash calculation is performed on the exact bytes that will be delivered to the page, after all decompression, decoding, and normalization has been applied.
+</div>
+
 Upon completion, the algorithm returns true if the resource's integrity is verified, or false if it fails verification, triggering appropriate enforcement actions.
 
 # Request Processing # {#request-processing}
 
 ## Extended Main Fetch Algorithm ## {#extended-main-fetch-algo}
+
+<div class="advisement">
+Browsers implementing this specification MUST perform WAICT integrity checks before executing any script or rendering any resource, when strict enforcement is enabled. This is essential to prevent potentially malicious code from executing before verification completes.
+</div>
 
 The extended main fetch algorithm integrates WAICT integrity checks into the browser's resource fetching process.
 
@@ -217,6 +356,10 @@ After processing, resources that fail integrity checks are handled according to 
 
 ## Handle Redirects with WAICT ## {#handle-redirects-section}
 
+<div class="note">
+Redirection chains can be exploited to bypass security checks if not properly handled. By verifying the final response after all redirects, WAICT ensures that security guarantees are maintained regardless of the number or type of redirects.
+</div>
+
 The handle redirects algorithm ensures WAICT integrity checks are maintained across redirects.
 
 <div algorithm="handle-redirects">
@@ -227,9 +370,17 @@ The handle redirects algorithm ensures WAICT integrity checks are maintained acr
     3. The URL list of the response is used to determine the original request URL for reporting purposes.
 </div>
 
+<div class="example">
+For example, if `https://example.com/script.js` redirects to `https://cdn.example.net/script-v2.js`, the integrity check is performed on the content served from the CDN. If verification fails, the report will include both URLs to help with debugging.
+</div>
+
 This ensures integrity verification cannot be bypassed through redirect chains.
 
 ## Handle Service Workers with WAICT ## {#handle-service-workers-section}
+
+<div class="advisement">
+Service workers represent a potential bypass vector for WAICT since they can intercept and modify network requests. Implementations MUST apply WAICT checks to resources served by service workers to maintain the security guarantees.
+</div>
 
 The handle service workers algorithm maintains WAICT integrity checks when service workers intercept requests.
 
@@ -241,11 +392,19 @@ The handle service workers algorithm maintains WAICT integrity checks when servi
     3. If a service worker provides a response that fails WAICT integrity checks, the response is treated according to the enforcement level (blocked, warned, or reported).
 </div>
 
+<div class="note">
+Service workers installed before WAICT was enabled for an origin should be re-verified against the current WAICT manifest when they are activated. If verification fails, the service worker should be unregistered in strict enforcement mode.
+</div>
+
 This prevents service workers from bypassing WAICT integrity protections.
 
 # Error Handling and Security # {#error-handling-security}
 
 ## Report WAICT Error ## {#report-waict-error}
+
+<div class="note">
+Error reports are designed to be compatible with existing CSP reporting infrastructure, allowing sites to use the same endpoint for both CSP and WAICT violation reports.
+</div>
 
 The report WAICT error algorithm handles reporting of integrity violations and other WAICT-related errors.
 
@@ -253,34 +412,40 @@ The report WAICT error algorithm handles reporting of integrity violations and o
     To <dfn export>report a WAICT error</dfn> with a [=request=] |request|, a [=response=] |response|, an error type |errorType|, and additional details |details|:
 
     1. Let |document| be |request|'s [=client=]'s [=global object=]'s [=associated Document=].
-    2. Let |reportingEndpoint| be the value of the `integrity-report-uri` directive in |document|'s [=CSP list=], or null if not specified.
-    3. If |reportingEndpoint| is null, return.
-    4. Let |report| be a new object with the following properties:
+    2. Let |waictHeaders| be the WAICT headers present in the response that delivered |document|.
+    3. Let |reportingEndpoint| be the value of the `integrity-report-uri` directive in |waictHeaders|, or null if not specified.
+    4. If |reportingEndpoint| is null, return.
+    5. Let |report| be a new object with the following properties:
         * `"document-uri"`: |document|'s URL
         * `"referrer"`: |document|'s referrer
         * `"blocked-uri"`: |request|'s URL
         * `"violated-directive"`: `"waict-integrity"` if |errorType| is a resource integrity error, `"waict-manifest"` if |errorType| is a manifest integrity error, or `"waict-transparency"` if |errorType| is a transparency verification error
-        * `"original-policy"`: The serialized CSP that contains the WAICT directives
+        * `"original-policy"`: The serialized WAICT header that contains the WAICT directives
         * `"disposition"`: The enforcement level (`"enforce"` or `"report"`)
         * `"status-code"`: |response|'s status if available, otherwise 0
         * `"waict-details"`: |details|
-    5. Send a POST request to |reportingEndpoint| with |report| as the body.
+    6. Send a POST request to |reportingEndpoint| with |report| as the body.
 </div>
 
 This ensures proper reporting and logging of WAICT violations for monitoring and debugging.
 
 ## Protect Against WAICT Downgrades ## {#protect-against-waict-downgrades-algo}
 
+<div class="advisement">
+Downgrade protection is essential to prevent attackers from disabling WAICT protections. Implementations MUST enforce this protection to prevent attackers from bypassing the integrity checks by removing or weakening the WAICT header.
+</div>
+
 The protect against WAICT downgrades algorithm prevents removal or weakening of WAICT protections.
 
 <div algorithm="protect-against-downgrades">
     To <dfn export>protect against WAICT downgrades</dfn> for a [=document=] |document|:
 
-    1. If |document|'s [=CSP list=] contains a directive named `integrity-enforcement-level` with value `"strict"`:
+    1. Let |waictHeaders| be the WAICT headers present in the response that delivered |document|.
+    2. If |waictHeaders| contains a directive named `integrity-level-strict`:
         1. Let |origin| be |document|'s [=origin=].
         2. Add |origin| to the browser's WAICT strict enforcement list with the current timestamp.
-        3. Set the expiration time to 24 hours from the current timestamp, or to the value specified in a `integrity-max-age` directive if present.
-    2. Before navigating to a URL:
+        3. Set the expiration time to 24 hours from the current timestamp, or to the value specified in a `integrity-max-age` directive in |waictHeaders| if present.
+    3. Before navigating to a URL:
         1. Let |origin| be the [=origin=] of the URL.
         2. If |origin| is in the browser's WAICT strict enforcement list and the navigation would result in a document without a valid WAICT manifest:
             1. Block the navigation and display a WAICT downgrade error page.
@@ -288,22 +453,17 @@ The protect against WAICT downgrades algorithm prevents removal or weakening of 
 
 This maintains the security of WAICT by preventing attackers from disabling or weakening protections.
 
-## Handle WAICT Key Revocation ## {#handle-key-revocation-section}
-
-The handle WAICT key revocation algorithm manages compromised transparency keys.
-
-<div algorithm="handle-key-revocation">
-    To <dfn export id="handle-waict-key-revocation">handle WAICT key revocation</dfn>:
-
-    1. Maintain a list of revoked public keys in the browser.
-    2. When verifying transparency signatures, check if any of the public keys used are in the revocation list.
-    3. If a revoked key is found, treat the signature as invalid.
-    4. Periodically update the revocation list from a trusted source.
-</div>
-
 # Performance Optimizations # {#performance-optimizations}
 
+<div class="note">
+While these optimizations are recommended, implementations should prioritize security over performance. In cases where optimizations might compromise security guarantees, security should take precedence.
+</div>
+
 ## Caching ## {#optimize-waict-performance-caching}
+
+<div class="example">
+For example, a browser might maintain a cache of verified resources along with their hashes. When a resource is requested again, the browser can check if the hash matches a previously verified version before performing full verification again.
+</div>
 
 The optimize WAICT caching algorithm improves performance through intelligent caching of integrity checks.
 
@@ -333,6 +493,10 @@ This minimizes the performance impact of WAICT integrity checks during page load
 
 # Privacy Considerations # {#privacy}
 
+<div class="advisement">
+Implementations MUST ensure that WAICT does not introduce new privacy risks. In particular, transparency verification should not require sending browsing history to third parties, and error reports should not include personal information.
+</div>
+
 ## Privacy-Preserving Verification ## {#privacy-verification}
 
 To preserve user privacy, WAICT transparency verification should:
@@ -341,7 +505,9 @@ To preserve user privacy, WAICT transparency verification should:
 2. Not reveal browsing history to third parties.
 3. Use locally cached proofs and signatures whenever possible.
 
-
+<div class="note">
+Transparency verification can be performed by bundling necessary proofs with the manifest, rather than requiring additional network requests during verification. This approach preserves privacy while maintaining the security benefits of transparency.
+</div>
 
 ## Data Collection ## {#data-collection}
 
@@ -351,74 +517,63 @@ WAICT should not introduce new privacy risks:
 2. Error reports should not include personal information.
 3. Transparency verification should not reveal the user's browsing history to third parties.
 
-# Content Security Policy Directives # {#csp-directives}
+<div class="advisement">
+When sending violation reports, implementations MUST NOT include any personal information or browsing history beyond what is strictly necessary to identify the resource that failed verification.
+</div>
 
-The WAICT specification defines the following CSP directives:
+# WAICT Header Examples # {#waict-header-examples}
+
+<div class="example" id="waict-basic-example">
+An e-commerce site might use the following WAICT header to ensure strict verification of critical scripts while allowing for reporting of binary resources:
 
 ```
-Content-Security-Policy:
-integrity-manifest-src 'url';
-integrity-manifest-hash 'hash';
-integrity-level-strict 'static';
-integrity-level-enforce 'script' 'style';
-integrity-level-report 'binary';
-integrity-enforcement-time timestamp-not-before timestamp-not-after;
+WAICT: integrity-manifest-src=https://shop.example.com/manifest.json;
+       integrity-manifest-hash=sha256-abcdef123456789;
+       integrity-level-strict=script;
+       integrity-level-enforce=static;
+       integrity-level-report=binary,style;
+       integrity-report-uri=https://shop.example.com/waict-reports
+```
+</div>
 
-Content-Security-Policy-Report-Only:
-integrity-manifest-src 'url';
-integrity-manifest-hash 'hash';
-integrity-level-report 'script' 'style';
+## Basic Usage Example ## {#basic-usage-example}
+
+```
+WAICT: integrity-manifest-src=https://example.com/manifest.json;
+       integrity-manifest-hash=sha256-abcdef123456789;
+       integrity-level-strict=static,script;
+       integrity-level-enforce=style;
+       integrity-level-report=binary;
+       integrity-report-uri=https://example.com/waict-reports
 ```
 
-## Manifest Directives ## {#manifest-directives}
+<div class="note">
+In this example, static HTML and JavaScript resources receive the highest level of protection, while style resources use a slightly weaker enforcement that still blocks malicious resources but with user notification. Binary resources are set to reporting-only mode during initial deployment.
+</div>
 
-integrity-manifest-src
-- **'url'**: The URL where the browser can fetch metadata about the manifest
+## Report-Only Example ## {#report-only-example}
 
-integrity-manifest-hash
-- **'hash'**: The hex encoded hash of the manifest
+```
+WAICT-Report-Only: integrity-manifest-src=https://example.com/manifest.json;
+                   integrity-manifest-hash=sha256-abcdef123456789;
+                   integrity-level-report=script,style,static,binary;
+                   integrity-report-uri=https://example.com/waict-reports
+```
 
-## Enforcement Level Directives ## {#enforcement-level-directives}
+<div class="note">
+The Report-Only mode is particularly useful for testing WAICT deployment before enabling enforcement. It allows sites to collect data on potential violations without affecting user experience, similar to CSP's report-only mode.
+</div>
 
-integrity-level-strict
-- Takes a space-separated list of resource types
-- Resources of these types will not be loaded/unlocked into the page until they pass the integrity check
-- Example: `integrity-level-strict 'static' 'script'`
+## Time-Limited Enforcement Example ## {#time-limited-example}
 
-integrity-level-enforce
-- Takes a space-separated list of resource types
-- Resources of these types will be loaded but with notifications sent to users about check status
-- Example: `integrity-level-enforce 'style' 'binary'`
+```
+WAICT: integrity-manifest-src=https://example.com/manifest.json;
+       integrity-manifest-hash=sha256-abcdef123456789;
+       integrity-level-strict=static,script;
+       integrity-enforcement-time=not-before=2023-01-01T00:00:00Z,not-after=2023-12-31T23:59:59Z;
+       integrity-report-uri=https://example.com/waict-reports
+```
 
-integrity-level-report
-- Takes a space-separated list of resource types
-- Resources of these types will be loaded with notifications only sent to developers
-- Example: `integrity-level-report 'script' 'media'`
-
-## Resource Types ## {#resource-types}
-
-The following resource types are supported:
-
-- **'script'**: JavaScript files, workers, and other executable code
-- **'style'**: CSS stylesheets
-- **'static'**: HTML documents, iframes, and frames
-- **'binary'**: WASM, images, fonts, media files, etc.
-
-## Additional Directives ## {#additional-directives}
-
-integrity-enforcement-time
-- **timestamp-not-before**: The timestamp for the beginning of enforcement
-- **timestamp-not-after**: The timestamp for the end of enforcement
-
-## Optional Directives ## {#optional-directives}
-
-integrity-page-hash
-- **'hash'**: The hash of the page
-- Avoids the roundtrip to get the manifest for resources bundled in the initial load
-
-integrity-resource-origin
-- **'self'**: All resources from the manifest must be loaded from the same origin as the site
-- **'remote-allowed'**: Some sub-resources in the manifest can be loaded from different origins
-
-integrity-package-separator
-- **'\<some-package-delimiter>'**: Value used to delimit packages in bundled resources
+<div class="example">
+This time-limited enforcement is useful for gradual rollouts or emergency response. For instance, a site might deploy strict enforcement only during business hours when engineers are available to respond to any issues, or schedule enforcement to begin after a planned deployment is complete.
+</div>
