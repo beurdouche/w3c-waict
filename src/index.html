@@ -6,7 +6,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-UD" rel="stylesheet">
   <meta content="Bikeshed version b25686b9f, updated Fri Mar 14 14:15:20 2025 -0700" name="generator">
   <link href="https://w3c.github.io/waict/" rel="canonical">
-  <meta content="c784fc15e090000511d547a9ec5ff85c61ab8260" name="revision">
+  <meta content="6823059039a75ab24ead89d34ded51463bbe317a" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>/* Boilerplate: style-autolinks */
@@ -611,7 +611,7 @@ var[data-var-color="6"] { --var-vg: #FFBCF2; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Web Application Integrity Consistency Transparency</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#UD">Unofficial Proposal Draft</a>, <time class="dt-updated" datetime="2025-03-18">18 March 2025</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#UD">Unofficial Proposal Draft</a>, <time class="dt-updated" datetime="2025-03-31">31 March 2025</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -660,46 +660,57 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       <li><a href="#background"><span class="secno">1.1</span> <span class="content">Background</span></a>
      </ol>
     <li>
-     <a href="#initial-request"><span class="secno">2</span> <span class="content">Initial request</span></a>
+     <a href="#waict-header"><span class="secno">2</span> <span class="content">WAICT Header</span></a>
      <ol class="toc">
-      <li><a href="#process-waict-manifest"><span class="secno">2.1</span> <span class="content">Process WAICT Manifest</span></a>
-      <li><a href="#verify-waict-integrity-algo"><span class="secno">2.2</span> <span class="content">Verify WAICT Integrity</span></a>
+      <li><a href="#header-definition"><span class="secno">2.1</span> <span class="content">Header Definition</span></a>
+      <li>
+       <a href="#waict-directives"><span class="secno">2.2</span> <span class="content">WAICT Directives</span></a>
+       <ol class="toc">
+        <li><a href="#waict-manifest-directives"><span class="secno">2.2.1</span> <span class="content">Manifest Directives</span></a>
+        <li><a href="#waict-enforcement-level-directives"><span class="secno">2.2.2</span> <span class="content">Enforcement Level Directives</span></a>
+        <li><a href="#waict-resource-types"><span class="secno">2.2.3</span> <span class="content">Resource Types</span></a>
+        <li><a href="#waict-additional-directives"><span class="secno">2.2.4</span> <span class="content">Additional Directives</span></a>
+        <li><a href="#waict-optional-directives"><span class="secno">2.2.5</span> <span class="content">Optional Directives</span></a>
+       </ol>
      </ol>
     <li>
-     <a href="#request-processing"><span class="secno">3</span> <span class="content">Request Processing</span></a>
+     <a href="#initial-request"><span class="secno">3</span> <span class="content">Initial request</span></a>
      <ol class="toc">
-      <li><a href="#extended-main-fetch-algo"><span class="secno">3.1</span> <span class="content">Extended Main Fetch Algorithm</span></a>
-      <li><a href="#process-waict-for-fetch-algo"><span class="secno">3.2</span> <span class="content">Process WAICT for Fetch</span></a>
-      <li><a href="#handle-redirects-section"><span class="secno">3.3</span> <span class="content">Handle Redirects with WAICT</span></a>
-      <li><a href="#handle-service-workers-section"><span class="secno">3.4</span> <span class="content">Handle Service Workers with WAICT</span></a>
+      <li><a href="#process-waict-manifest"><span class="secno">3.1</span> <span class="content">Process WAICT Manifest</span></a>
+      <li><a href="#verify-waict-integrity-algo"><span class="secno">3.2</span> <span class="content">Verify WAICT Integrity</span></a>
      </ol>
     <li>
-     <a href="#error-handling-security"><span class="secno">4</span> <span class="content">Error Handling and Security</span></a>
+     <a href="#request-processing"><span class="secno">4</span> <span class="content">Request Processing</span></a>
      <ol class="toc">
-      <li><a href="#report-waict-error"><span class="secno">4.1</span> <span class="content">Report WAICT Error</span></a>
-      <li><a href="#protect-against-waict-downgrades-algo"><span class="secno">4.2</span> <span class="content">Protect Against WAICT Downgrades</span></a>
-      <li><a href="#handle-key-revocation-section"><span class="secno">4.3</span> <span class="content">Handle WAICT Key Revocation</span></a>
+      <li><a href="#extended-main-fetch-algo"><span class="secno">4.1</span> <span class="content">Extended Main Fetch Algorithm</span></a>
+      <li><a href="#process-waict-for-fetch-algo"><span class="secno">4.2</span> <span class="content">Process WAICT for Fetch</span></a>
+      <li><a href="#handle-redirects-section"><span class="secno">4.3</span> <span class="content">Handle Redirects with WAICT</span></a>
+      <li><a href="#handle-service-workers-section"><span class="secno">4.4</span> <span class="content">Handle Service Workers with WAICT</span></a>
      </ol>
     <li>
-     <a href="#performance-optimizations"><span class="secno">5</span> <span class="content">Performance Optimizations</span></a>
+     <a href="#error-handling-security"><span class="secno">5</span> <span class="content">Error Handling and Security</span></a>
      <ol class="toc">
-      <li><a href="#optimize-waict-performance-caching"><span class="secno">5.1</span> <span class="content">Caching</span></a>
-      <li><a href="#optimize-waict-performance-parallel"><span class="secno">5.2</span> <span class="content">Parallel Processing</span></a>
+      <li><a href="#report-waict-error"><span class="secno">5.1</span> <span class="content">Report WAICT Error</span></a>
+      <li><a href="#protect-against-waict-downgrades-algo"><span class="secno">5.2</span> <span class="content">Protect Against WAICT Downgrades</span></a>
      </ol>
     <li>
-     <a href="#privacy"><span class="secno">6</span> <span class="content">Privacy Considerations</span></a>
+     <a href="#performance-optimizations"><span class="secno">6</span> <span class="content">Performance Optimizations</span></a>
      <ol class="toc">
-      <li><a href="#privacy-verification"><span class="secno">6.1</span> <span class="content">Privacy-Preserving Verification</span></a>
-      <li><a href="#data-collection"><span class="secno">6.2</span> <span class="content">Data Collection</span></a>
+      <li><a href="#optimize-waict-performance-caching"><span class="secno">6.1</span> <span class="content">Caching</span></a>
+      <li><a href="#optimize-waict-performance-parallel"><span class="secno">6.2</span> <span class="content">Parallel Processing</span></a>
      </ol>
     <li>
-     <a href="#csp-directives"><span class="secno">7</span> <span class="content">Content Security Policy Directives</span></a>
+     <a href="#privacy"><span class="secno">7</span> <span class="content">Privacy Considerations</span></a>
      <ol class="toc">
-      <li><a href="#manifest-directives"><span class="secno">7.1</span> <span class="content">Manifest Directives</span></a>
-      <li><a href="#enforcement-level-directives"><span class="secno">7.2</span> <span class="content">Enforcement Level Directives</span></a>
-      <li><a href="#resource-types"><span class="secno">7.3</span> <span class="content">Resource Types</span></a>
-      <li><a href="#additional-directives"><span class="secno">7.4</span> <span class="content">Additional Directives</span></a>
-      <li><a href="#optional-directives"><span class="secno">7.5</span> <span class="content">Optional Directives</span></a>
+      <li><a href="#privacy-verification"><span class="secno">7.1</span> <span class="content">Privacy-Preserving Verification</span></a>
+      <li><a href="#data-collection"><span class="secno">7.2</span> <span class="content">Data Collection</span></a>
+     </ol>
+    <li>
+     <a href="#waict-header-examples"><span class="secno">8</span> <span class="content">WAICT Header Examples</span></a>
+     <ol class="toc">
+      <li><a href="#basic-usage-example"><span class="secno">8.1</span> <span class="content">Basic Usage Example</span></a>
+      <li><a href="#report-only-example"><span class="secno">8.2</span> <span class="content">Report-Only Example</span></a>
+      <li><a href="#time-limited-example"><span class="secno">8.3</span> <span class="content">Time-Limited Enforcement Example</span></a>
      </ol>
     <li>
      <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
@@ -722,6 +733,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
   <main>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
    <p>This specification defines a standardized, browser-based mechanism to ensure web application integrity, consistency, and transparency. It extends the Fetch Standard to provide stronger integrity guarantees for web applications.</p>
+   <div class="note" role="note"> This specification is designed to work alongside existing web security mechanisms such as Content Security Policy (CSP), Subresource Integrity (SRI), and Transport Layer Security (TLS). While these existing mechanisms provide important security properties, WAICT addresses additional threats that they do not fully mitigate. </div>
    <h3 class="heading settled" data-level="1.1" id="background"><span class="secno">1.1. </span><span class="content">Background</span><a class="self-link" href="#background"></a></h3>
    <p>The Web Application Integrity, Consistency, and Transparency (WAICT) specification aims to raise the security and privacy bar for web applications by ensuring three key properties:</p>
    <ol>
@@ -732,6 +744,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p><strong>Transparency</strong>: Ensuring stronger security for the consistency mechanism through append-only logs that record published code versions, deterring hidden or short-lived changes and facilitating external audits.</p>
    </ol>
+   <div class="note" role="note"> Unlike Subresource Integrity which only applies to specific resources with <code>integrity</code> attributes, WAICT provides site-wide protection for all resources based on a centralized manifest. This helps defend against targeted attacks where malicious code might be selectively served to specific users. </div>
    <p>Security-critical web applications such as webmail, secure messaging, banking, and other sensitive sites face significant threats:</p>
    <ul>
     <li data-md>
@@ -742,8 +755,131 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <p><strong>Targeted Attacks</strong>: Attempts to serve malicious code to specific users while serving legitimate code to others.</p>
    </ul>
    <p>These threats are particularly concerning for applications implementing end-to-end encryption, where the integrity of the delivered code represents the most critical link in the security chain. While the data may be encrypted in transit and storage, compromised client-side code can undermine the entire security model.</p>
-   <h2 class="heading settled" data-level="2" id="initial-request"><span class="secno">2. </span><span class="content">Initial request</span><a class="self-link" href="#initial-request"></a></h2>
-   <h3 class="heading settled" data-level="2.1" id="process-waict-manifest"><span class="secno">2.1. </span><span class="content">Process WAICT Manifest</span><a class="self-link" href="#process-waict-manifest"></a></h3>
+   <h2 class="heading settled" data-level="2" id="waict-header"><span class="secno">2. </span><span class="content">WAICT Header</span><a class="self-link" href="#waict-header"></a></h2>
+   <h3 class="heading settled" data-level="2.1" id="header-definition"><span class="secno">2.1. </span><span class="content">Header Definition</span><a class="self-link" href="#header-definition"></a></h3>
+   <p>The WAICT specification defines a new HTTP header, <code>WAICT</code>, which carries directives that enforce web application integrity, consistency, and transparency.</p>
+   <p>The WAICT header syntax follows a format similar to other HTTP security headers, with semicolon-separated directives:</p>
+<pre>WAICT: directive1=value1; directive2=value2; directive3
+</pre>
+   <p>Multiple WAICT headers in a response are combined into a single policy by joining their directives.</p>
+   <div class="note" role="note"> The WAICT header is designed as a standalone security header rather than extending CSP to maintain a clear separation of concerns. While CSP focuses on preventing content injection attacks, WAICT addresses the separate concern of ensuring application integrity. </div>
+   <p>A <code>WAICT-Report-Only</code> header is also defined, which reports violations without enforcing them, allowing sites to test WAICT policies before enforcement.</p>
+   <h3 class="heading settled" data-level="2.2" id="waict-directives"><span class="secno">2.2. </span><span class="content">WAICT Directives</span><a class="self-link" href="#waict-directives"></a></h3>
+   <p>The WAICT header supports the following directives:</p>
+   <h4 class="heading settled" data-level="2.2.1" id="waict-manifest-directives"><span class="secno">2.2.1. </span><span class="content">Manifest Directives</span><a class="self-link" href="#waict-manifest-directives"></a></h4>
+   <p>integrity-manifest-src</p>
+   <ul>
+    <li data-md>
+     <p><strong>'url'</strong>: The URL where the browser can fetch metadata about the manifest</p>
+    <li data-md>
+     <p>Example: <code>integrity-manifest-src=https://example.com/manifest.json</code></p>
+   </ul>
+   <div class="note" role="note"> The manifest URL should be served from the same origin as the protected content when possible. If it must be served from a different origin, that origin should have strong security controls. </div>
+   <p>integrity-manifest-hash</p>
+   <ul>
+    <li data-md>
+     <p><strong>'hash'</strong>: The hex encoded hash of the manifest</p>
+    <li data-md>
+     <p>Example: <code>integrity-manifest-hash=sha256-abcdef123456...</code></p>
+   </ul>
+   <div class="advisement"> The hash of the manifest is critical for establishing the root of trust. Without this value, an attacker could potentially serve a modified manifest that would allow malicious resources to pass verification. </div>
+   <h4 class="heading settled" data-level="2.2.2" id="waict-enforcement-level-directives"><span class="secno">2.2.2. </span><span class="content">Enforcement Level Directives</span><a class="self-link" href="#waict-enforcement-level-directives"></a></h4>
+   <div class="note" role="note"> Sites should choose enforcement levels based on their security requirements and tolerance for false positives. Critical applications handling sensitive data should prefer strict enforcement for scripts and static content. </div>
+   <p>integrity-level-strict</p>
+   <ul>
+    <li data-md>
+     <p>Takes a comma-separated list of resource types</p>
+    <li data-md>
+     <p>Resources of these types will not be loaded/unlocked into the page until they pass the integrity check</p>
+    <li data-md>
+     <p>Example: <code>integrity-level-strict=static,script</code></p>
+   </ul>
+   <p>integrity-level-enforce</p>
+   <ul>
+    <li data-md>
+     <p>Takes a comma-separated list of resource types</p>
+    <li data-md>
+     <p>Resources of these types will be loaded but with notifications sent to users about check status</p>
+    <li data-md>
+     <p>Example: <code>integrity-level-enforce=style,binary</code></p>
+   </ul>
+   <p>integrity-level-report</p>
+   <ul>
+    <li data-md>
+     <p>Takes a comma-separated list of resource types</p>
+    <li data-md>
+     <p>Resources of these types will be loaded with notifications only sent to developers</p>
+    <li data-md>
+     <p>Example: <code>integrity-level-report=script,media</code></p>
+   </ul>
+   <h4 class="heading settled" data-level="2.2.3" id="waict-resource-types"><span class="secno">2.2.3. </span><span class="content">Resource Types</span><a class="self-link" href="#waict-resource-types"></a></h4>
+   <div class="example" id="example-0a2d7348"><a class="self-link" href="#example-0a2d7348"></a> A typical deployment might start with report-only mode for all resource types, then gradually increase enforcement, starting with less critical resources like images and styles, and finally applying strict enforcement to scripts and documents. </div>
+   <p>The following resource types are supported:</p>
+   <ul>
+    <li data-md>
+     <p><strong>'script'</strong>: JavaScript files, workers, and other executable code</p>
+    <li data-md>
+     <p><strong>'style'</strong>: CSS stylesheets</p>
+    <li data-md>
+     <p><strong>'static'</strong>: HTML documents, iframes, and frames</p>
+    <li data-md>
+     <p><strong>'binary'</strong>: WASM, images, fonts, media files, etc.</p>
+   </ul>
+   <h4 class="heading settled" data-level="2.2.4" id="waict-additional-directives"><span class="secno">2.2.4. </span><span class="content">Additional Directives</span><a class="self-link" href="#waict-additional-directives"></a></h4>
+   <p>integrity-enforcement-time</p>
+   <ul>
+    <li data-md>
+     <p><strong>not-before=timestamp</strong>: The timestamp for the beginning of enforcement</p>
+    <li data-md>
+     <p><strong>not-after=timestamp</strong>: The timestamp for the end of enforcement</p>
+    <li data-md>
+     <p>Example: <code>integrity-enforcement-time=not-before=2023-01-01T00:00:00Z,not-after=2023-12-31T23:59:59Z</code></p>
+   </ul>
+   <p>integrity-report-uri</p>
+   <ul>
+    <li data-md>
+     <p><strong>'url'</strong>: The URL where violation reports will be sent</p>
+    <li data-md>
+     <p>Example: <code>integrity-report-uri=https://example.com/waict-report</code></p>
+   </ul>
+   <h4 class="heading settled" data-level="2.2.5" id="waict-optional-directives"><span class="secno">2.2.5. </span><span class="content">Optional Directives</span><a class="self-link" href="#waict-optional-directives"></a></h4>
+   <p>integrity-page-hash</p>
+   <ul>
+    <li data-md>
+     <p><strong>'hash'</strong>: The hash of the page</p>
+    <li data-md>
+     <p>Avoids the roundtrip to get the manifest for resources bundled in the initial load</p>
+    <li data-md>
+     <p>Example: <code>integrity-page-hash=sha256-abcdef123456...</code></p>
+   </ul>
+   <p>integrity-resource-origin</p>
+   <ul>
+    <li data-md>
+     <p><strong>'self'</strong>: All resources from the manifest must be loaded from the same origin as the site</p>
+    <li data-md>
+     <p><strong>'remote-allowed'</strong>: Some sub-resources in the manifest can be loaded from different origins</p>
+    <li data-md>
+     <p>Example: <code>integrity-resource-origin=self</code></p>
+   </ul>
+   <p>integrity-package-separator</p>
+   <ul>
+    <li data-md>
+     <p><strong>'delimiter'</strong>: Value used to delimit packages in bundled resources</p>
+    <li data-md>
+     <p>Example: <code>integrity-package-separator=-----PACKAGE_BOUNDARY-----</code></p>
+   </ul>
+   <p>integrity-max-age</p>
+   <ul>
+    <li data-md>
+     <p><strong>seconds</strong>: Duration in seconds that browsers should remember a site’s WAICT policy</p>
+    <li data-md>
+     <p>Used primarily for downgrade protection</p>
+    <li data-md>
+     <p>Example: <code>integrity-max-age=86400</code></p>
+   </ul>
+   <h2 class="heading settled" data-level="3" id="initial-request"><span class="secno">3. </span><span class="content">Initial request</span><a class="self-link" href="#initial-request"></a></h2>
+   <h3 class="heading settled" data-level="3.1" id="process-waict-manifest"><span class="secno">3.1. </span><span class="content">Process WAICT Manifest</span><a class="self-link" href="#process-waict-manifest"></a></h3>
+   <div class="note" role="note"> The manifest processing occurs during the initial page load, after the document has been parsed but before subresources are loaded. This ensures that integrity checks can be applied to all subresources without delaying the initial HTML parsing. </div>
    <p>The process WAICT manifest algorithm takes a document and processes its WAICT manifest, validating integrity and storing enforcement settings.</p>
    <div class="algorithm" data-algorithm="process-waict-manifest">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="process-a-waict-manifest">process a WAICT manifest</dfn> for a <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-document" id="ref-for-concept-document">document</a> <var>document</var>: 
@@ -751,7 +887,9 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li data-md>
       <p>Let <var>manifest</var> be null.</p>
      <li data-md>
-      <p>If <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list">CSP list</a> contains a directive named <code>integrity-manifest-src</code>:</p>
+      <p>Let <var>waictHeaders</var> be the WAICT headers present in the response that delivered <var>document</var>.</p>
+     <li data-md>
+      <p>If <var>waictHeaders</var> contains a directive named <code>integrity-manifest-src</code>:</p>
       <ol>
        <li data-md>
         <p>Let <var>manifestSrc</var> be the value of that directive.</p>
@@ -773,7 +911,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li data-md>
       <p>If <var>manifest</var> is null, return.</p>
      <li data-md>
-      <p>Let <var>expectedHash</var> be the value of the <code>integrity-manifest-hash</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list①">CSP list</a>.</p>
+      <p>Let <var>expectedHash</var> be the value of the <code>integrity-manifest-hash</code> directive in <var>waictHeaders</var>.</p>
      <li data-md>
       <p>Let <var>actualHash</var> be the result of computing a SHA-256 hash over the stringified <var>manifest</var>.</p>
      <li data-md>
@@ -789,13 +927,13 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li data-md>
       <p>Let <var>enforcementConfig</var> be a new empty object.</p>
      <li data-md>
-      <p>For each <var>resourceType</var> in the <code>integrity-level-strict</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list②">CSP list</a>:</p>
+      <p>For each <var>resourceType</var> in the <code>integrity-level-strict</code> directive in <var>waictHeaders</var>:</p>
       <ol>
        <li data-md>
         <p>Set <var>enforcementConfig</var>[<var>resourceType</var>] to <code>"strict"</code>.</p>
       </ol>
      <li data-md>
-      <p>For each <var>resourceType</var> in the <code>integrity-level-enforce</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list③">CSP list</a>:</p>
+      <p>For each <var>resourceType</var> in the <code>integrity-level-enforce</code> directive in <var>waictHeaders</var>:</p>
       <ol>
        <li data-md>
         <p>If <var>enforcementConfig</var>[<var>resourceType</var>] is not already set:</p>
@@ -805,7 +943,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
         </ol>
       </ol>
      <li data-md>
-      <p>For each <var>resourceType</var> in the <code>integrity-level-report</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list④">CSP list</a>:</p>
+      <p>For each <var>resourceType</var> in the <code>integrity-level-report</code> directive in <var>waictHeaders</var>:</p>
       <ol>
        <li data-md>
         <p>If <var>enforcementConfig</var>[<var>resourceType</var>] is not already set:</p>
@@ -815,7 +953,21 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
         </ol>
       </ol>
      <li data-md>
-      <p>Let <var>enforcementTimeStart</var> and <var>enforcementTimeEnd</var> be the values from the <code>integrity-enforcement-time</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list⑤">CSP list</a>, or null if not specified.</p>
+      <p>Let <var>enforcementTimeDirective</var> be the value of the <code>integrity-enforcement-time</code> directive in <var>waictHeaders</var>.</p>
+     <li data-md>
+      <p>Let <var>enforcementTimeStart</var> and <var>enforcementTimeEnd</var> be null.</p>
+     <li data-md>
+      <p>If <var>enforcementTimeDirective</var> contains a <code>not-before</code> parameter:</p>
+      <ol>
+       <li data-md>
+        <p>Set <var>enforcementTimeStart</var> to the timestamp value of that parameter.</p>
+      </ol>
+     <li data-md>
+      <p>If <var>enforcementTimeDirective</var> contains a <code>not-after</code> parameter:</p>
+      <ol>
+       <li data-md>
+        <p>Set <var>enforcementTimeEnd</var> to the timestamp value of that parameter.</p>
+      </ol>
      <li data-md>
       <p>If <var>enforcementTimeStart</var> is not null and the current time is before <var>enforcementTimeStart</var>:</p>
       <ol>
@@ -855,7 +1007,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>After processing, the manifest’s integrity is verified and enforcement settings are stored for use in subsequent resource checks.</p>
-   <h3 class="heading settled" data-level="2.2" id="verify-waict-integrity-algo"><span class="secno">2.2. </span><span class="content">Verify WAICT Integrity</span><a class="self-link" href="#verify-waict-integrity-algo"></a></h3>
+   <h3 class="heading settled" data-level="3.2" id="verify-waict-integrity-algo"><span class="secno">3.2. </span><span class="content">Verify WAICT Integrity</span><a class="self-link" href="#verify-waict-integrity-algo"></a></h3>
+   <div class="note" role="note"> For performance reasons, implementations may choose to verify resources asynchronously in non-strict enforcement modes. However, in strict mode, resources must be verified before they are delivered to the page to maintain the security guarantee. </div>
    <p>The verify WAICT integrity algorithm checks if a resource’s content matches its declared hash in the WAICT manifest.</p>
    <div class="algorithm" data-algorithm="verify-waict-integrity">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="verify-waict-integrity">verify WAICT integrity</dfn> for a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request">request</a> <var>request</var> and <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response">response</a> <var>response</var>: 
@@ -909,7 +1062,9 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li data-md>
       <p>Let <var>actualHash</var> be the result of computing a SHA-256 hash over <var>resourceBody</var>.</p>
      <li data-md>
-      <p>Let <var>packageDelimiter</var> be the value of the <code>integrity-package-separator</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list⑥">CSP list</a>, or null if not specified.</p>
+      <p>Let <var>waictHeaders</var> be the WAICT headers present in the response that delivered <var>document</var>.</p>
+     <li data-md>
+      <p>Let <var>packageDelimiter</var> be the value of the <code>integrity-package-separator</code> directive in <var>waictHeaders</var>, or null if not specified.</p>
      <li data-md>
       <p>If <var>packageDelimiter</var> is not null:</p>
       <ol>
@@ -956,9 +1111,11 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       </ol>
     </ol>
    </div>
+   <div class="advisement"> Implementations must ensure that the hash calculation is performed on the exact bytes that will be delivered to the page, after all decompression, decoding, and normalization has been applied. </div>
    <p>Upon completion, the algorithm returns true if the resource’s integrity is verified, or false if it fails verification, triggering appropriate enforcement actions.</p>
-   <h2 class="heading settled" data-level="3" id="request-processing"><span class="secno">3. </span><span class="content">Request Processing</span><a class="self-link" href="#request-processing"></a></h2>
-   <h3 class="heading settled" data-level="3.1" id="extended-main-fetch-algo"><span class="secno">3.1. </span><span class="content">Extended Main Fetch Algorithm</span><a class="self-link" href="#extended-main-fetch-algo"></a></h3>
+   <h2 class="heading settled" data-level="4" id="request-processing"><span class="secno">4. </span><span class="content">Request Processing</span><a class="self-link" href="#request-processing"></a></h2>
+   <h3 class="heading settled" data-level="4.1" id="extended-main-fetch-algo"><span class="secno">4.1. </span><span class="content">Extended Main Fetch Algorithm</span><a class="self-link" href="#extended-main-fetch-algo"></a></h3>
+   <div class="advisement"> Browsers implementing this specification MUST perform WAICT integrity checks before executing any script or rendering any resource, when strict enforcement is enabled. This is essential to prevent potentially malicious code from executing before verification completes. </div>
    <p>The extended main fetch algorithm integrates WAICT integrity checks into the browser’s resource fetching process.</p>
    <div class="algorithm" data-algorithm="extend main fetch algorithm">
      To extend the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-main-fetch" id="ref-for-concept-main-fetch">main fetch</a> algorithm with WAICT support, the following modifications are made: 
@@ -988,7 +1145,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>This extension ensures all relevant resources are verified against the WAICT manifest during loading.</p>
-   <h3 class="heading settled" data-level="3.2" id="process-waict-for-fetch-algo"><span class="secno">3.2. </span><span class="content">Process WAICT for Fetch</span><a class="self-link" href="#process-waict-for-fetch-algo"></a></h3>
+   <h3 class="heading settled" data-level="4.2" id="process-waict-for-fetch-algo"><span class="secno">4.2. </span><span class="content">Process WAICT for Fetch</span><a class="self-link" href="#process-waict-for-fetch-algo"></a></h3>
    <p>The process WAICT for fetch algorithm performs integrity verification during resource fetching.</p>
    <div class="algorithm" data-algorithm="process WAICT for fetch">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="process-waict-for-fetch">process WAICT for fetch</dfn> with a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request①">request</a> <var>request</var> and a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response①">response</a> <var>response</var>: 
@@ -1104,7 +1261,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>After processing, resources that fail integrity checks are handled according to the configured enforcement level.</p>
-   <h3 class="heading settled" data-level="3.3" id="handle-redirects-section"><span class="secno">3.3. </span><span class="content">Handle Redirects with WAICT</span><a class="self-link" href="#handle-redirects-section"></a></h3>
+   <h3 class="heading settled" data-level="4.3" id="handle-redirects-section"><span class="secno">4.3. </span><span class="content">Handle Redirects with WAICT</span><a class="self-link" href="#handle-redirects-section"></a></h3>
+   <div class="note" role="note"> Redirection chains can be exploited to bypass security checks if not properly handled. By verifying the final response after all redirects, WAICT ensures that security guarantees are maintained regardless of the number or type of redirects. </div>
    <p>The handle redirects algorithm ensures WAICT integrity checks are maintained across redirects.</p>
    <div class="algorithm" data-algorithm="handle-redirects">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="handle-redirects-with-waict">handle redirects with WAICT</dfn>: 
@@ -1117,8 +1275,10 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       <p>The URL list of the response is used to determine the original request URL for reporting purposes.</p>
     </ol>
    </div>
+   <div class="example" id="example-e5238528"><a class="self-link" href="#example-e5238528"></a> For example, if <code>https://example.com/script.js</code> redirects to <code>https://cdn.example.net/script-v2.js</code>, the integrity check is performed on the content served from the CDN. If verification fails, the report will include both URLs to help with debugging. </div>
    <p>This ensures integrity verification cannot be bypassed through redirect chains.</p>
-   <h3 class="heading settled" data-level="3.4" id="handle-service-workers-section"><span class="secno">3.4. </span><span class="content">Handle Service Workers with WAICT</span><a class="self-link" href="#handle-service-workers-section"></a></h3>
+   <h3 class="heading settled" data-level="4.4" id="handle-service-workers-section"><span class="secno">4.4. </span><span class="content">Handle Service Workers with WAICT</span><a class="self-link" href="#handle-service-workers-section"></a></h3>
+   <div class="advisement"> Service workers represent a potential bypass vector for WAICT since they can intercept and modify network requests. Implementations MUST apply WAICT checks to resources served by service workers to maintain the security guarantees. </div>
    <p>The handle service workers algorithm maintains WAICT integrity checks when service workers intercept requests.</p>
    <div class="algorithm" data-algorithm="handle-service-workers">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="handle-service-workers-with-waict">handle service workers with WAICT</dfn>: 
@@ -1131,9 +1291,11 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       <p>If a service worker provides a response that fails WAICT integrity checks, the response is treated according to the enforcement level (blocked, warned, or reported).</p>
     </ol>
    </div>
+   <div class="note" role="note"> Service workers installed before WAICT was enabled for an origin should be re-verified against the current WAICT manifest when they are activated. If verification fails, the service worker should be unregistered in strict enforcement mode. </div>
    <p>This prevents service workers from bypassing WAICT integrity protections.</p>
-   <h2 class="heading settled" data-level="4" id="error-handling-security"><span class="secno">4. </span><span class="content">Error Handling and Security</span><a class="self-link" href="#error-handling-security"></a></h2>
-   <h3 class="heading settled" data-level="4.1" id="report-waict-error"><span class="secno">4.1. </span><span class="content">Report WAICT Error</span><a class="self-link" href="#report-waict-error"></a></h3>
+   <h2 class="heading settled" data-level="5" id="error-handling-security"><span class="secno">5. </span><span class="content">Error Handling and Security</span><a class="self-link" href="#error-handling-security"></a></h2>
+   <h3 class="heading settled" data-level="5.1" id="report-waict-error"><span class="secno">5.1. </span><span class="content">Report WAICT Error</span><a class="self-link" href="#report-waict-error"></a></h3>
+   <div class="note" role="note"> Error reports are designed to be compatible with existing CSP reporting infrastructure, allowing sites to use the same endpoint for both CSP and WAICT violation reports. </div>
    <p>The report WAICT error algorithm handles reporting of integrity violations and other WAICT-related errors.</p>
    <div class="algorithm" data-algorithm="report-waict-error">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="report-a-waict-error">report a WAICT error</dfn> with a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request" id="ref-for-concept-request②">request</a> <var>request</var>, a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response②">response</a> <var>response</var>, an error type <var>errorType</var>, and additional details <var>details</var>: 
@@ -1141,7 +1303,9 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li data-md>
       <p>Let <var>document</var> be <var>request</var>’s <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-request-client" id="ref-for-concept-request-client④">client</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-realm-global" id="ref-for-concept-realm-global③">global object</a>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window" id="ref-for-concept-document-window③">associated Document</a>.</p>
      <li data-md>
-      <p>Let <var>reportingEndpoint</var> be the value of the <code>integrity-report-uri</code> directive in <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list⑦">CSP list</a>, or null if not specified.</p>
+      <p>Let <var>waictHeaders</var> be the WAICT headers present in the response that delivered <var>document</var>.</p>
+     <li data-md>
+      <p>Let <var>reportingEndpoint</var> be the value of the <code>integrity-report-uri</code> directive in <var>waictHeaders</var>, or null if not specified.</p>
      <li data-md>
       <p>If <var>reportingEndpoint</var> is null, return.</p>
      <li data-md>
@@ -1156,7 +1320,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
        <li data-md>
         <p><code>"violated-directive"</code>: <code>"waict-integrity"</code> if <var>errorType</var> is a resource integrity error, <code>"waict-manifest"</code> if <var>errorType</var> is a manifest integrity error, or <code>"waict-transparency"</code> if <var>errorType</var> is a transparency verification error</p>
        <li data-md>
-        <p><code>"original-policy"</code>: The serialized CSP that contains the WAICT directives</p>
+        <p><code>"original-policy"</code>: The serialized WAICT header that contains the WAICT directives</p>
        <li data-md>
         <p><code>"disposition"</code>: The enforcement level (<code>"enforce"</code> or <code>"report"</code>)</p>
        <li data-md>
@@ -1169,20 +1333,23 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>This ensures proper reporting and logging of WAICT violations for monitoring and debugging.</p>
-   <h3 class="heading settled" data-level="4.2" id="protect-against-waict-downgrades-algo"><span class="secno">4.2. </span><span class="content">Protect Against WAICT Downgrades</span><a class="self-link" href="#protect-against-waict-downgrades-algo"></a></h3>
+   <h3 class="heading settled" data-level="5.2" id="protect-against-waict-downgrades-algo"><span class="secno">5.2. </span><span class="content">Protect Against WAICT Downgrades</span><a class="self-link" href="#protect-against-waict-downgrades-algo"></a></h3>
+   <div class="advisement"> Downgrade protection is essential to prevent attackers from disabling WAICT protections. Implementations MUST enforce this protection to prevent attackers from bypassing the integrity checks by removing or weakening the WAICT header. </div>
    <p>The protect against WAICT downgrades algorithm prevents removal or weakening of WAICT protections.</p>
    <div class="algorithm" data-algorithm="protect-against-downgrades">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="protect-against-waict-downgrades">protect against WAICT downgrades</dfn> for a <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-document" id="ref-for-concept-document②">document</a> <var>document</var>: 
     <ol>
      <li data-md>
-      <p>If <var>document</var>’s <a data-link-type="dfn" href="https://w3c.github.io/webappsec-csp/#csp-list" id="ref-for-csp-list⑧">CSP list</a> contains a directive named <code>integrity-enforcement-level</code> with value <code>"strict"</code>:</p>
+      <p>Let <var>waictHeaders</var> be the WAICT headers present in the response that delivered <var>document</var>.</p>
+     <li data-md>
+      <p>If <var>waictHeaders</var> contains a directive named <code>integrity-level-strict</code>:</p>
       <ol>
        <li data-md>
         <p>Let <var>origin</var> be <var>document</var>’s <a data-link-type="dfn" href="https://dom.spec.whatwg.org/#concept-document-origin" id="ref-for-concept-document-origin">origin</a>.</p>
        <li data-md>
         <p>Add <var>origin</var> to the browser’s WAICT strict enforcement list with the current timestamp.</p>
        <li data-md>
-        <p>Set the expiration time to 24 hours from the current timestamp, or to the value specified in a <code>integrity-max-age</code> directive if present.</p>
+        <p>Set the expiration time to 24 hours from the current timestamp, or to the value specified in a <code>integrity-max-age</code> directive in <var>waictHeaders</var> if present.</p>
       </ol>
      <li data-md>
       <p>Before navigating to a URL:</p>
@@ -1199,23 +1366,10 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>This maintains the security of WAICT by preventing attackers from disabling or weakening protections.</p>
-   <h3 class="heading settled" data-level="4.3" id="handle-key-revocation-section"><span class="secno">4.3. </span><span class="content">Handle WAICT Key Revocation</span><a class="self-link" href="#handle-key-revocation-section"></a></h3>
-   <p>The handle WAICT key revocation algorithm manages compromised transparency keys.</p>
-   <div class="algorithm" data-algorithm="handle-key-revocation">
-     To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="handle-waict-key-revocation">handle WAICT key revocation</dfn>: 
-    <ol>
-     <li data-md>
-      <p>Maintain a list of revoked public keys in the browser.</p>
-     <li data-md>
-      <p>When verifying transparency signatures, check if any of the public keys used are in the revocation list.</p>
-     <li data-md>
-      <p>If a revoked key is found, treat the signature as invalid.</p>
-     <li data-md>
-      <p>Periodically update the revocation list from a trusted source.</p>
-    </ol>
-   </div>
-   <h2 class="heading settled" data-level="5" id="performance-optimizations"><span class="secno">5. </span><span class="content">Performance Optimizations</span><a class="self-link" href="#performance-optimizations"></a></h2>
-   <h3 class="heading settled" data-level="5.1" id="optimize-waict-performance-caching"><span class="secno">5.1. </span><span class="content">Caching</span><a class="self-link" href="#optimize-waict-performance-caching"></a></h3>
+   <h2 class="heading settled" data-level="6" id="performance-optimizations"><span class="secno">6. </span><span class="content">Performance Optimizations</span><a class="self-link" href="#performance-optimizations"></a></h2>
+   <div class="note" role="note"> While these optimizations are recommended, implementations should prioritize security over performance. In cases where optimizations might compromise security guarantees, security should take precedence. </div>
+   <h3 class="heading settled" data-level="6.1" id="optimize-waict-performance-caching"><span class="secno">6.1. </span><span class="content">Caching</span><a class="self-link" href="#optimize-waict-performance-caching"></a></h3>
+   <div class="example" id="example-3d0ab06e"><a class="self-link" href="#example-3d0ab06e"></a> For example, a browser might maintain a cache of verified resources along with their hashes. When a resource is requested again, the browser can check if the hash matches a previously verified version before performing full verification again. </div>
    <p>The optimize WAICT caching algorithm improves performance through intelligent caching of integrity checks.</p>
    <div class="algorithm" data-algorithm="optimize-caching">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="optimize-waict-caching">optimize WAICT caching</dfn>: 
@@ -1229,7 +1383,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>This reduces redundant integrity checks while maintaining security guarantees.</p>
-   <h3 class="heading settled" data-level="5.2" id="optimize-waict-performance-parallel"><span class="secno">5.2. </span><span class="content">Parallel Processing</span><a class="self-link" href="#optimize-waict-performance-parallel"></a></h3>
+   <h3 class="heading settled" data-level="6.2" id="optimize-waict-performance-parallel"><span class="secno">6.2. </span><span class="content">Parallel Processing</span><a class="self-link" href="#optimize-waict-performance-parallel"></a></h3>
    <p>The optimize WAICT parallel processing algorithm improves performance through concurrent integrity checks.</p>
    <div class="algorithm" data-algorithm="optimize-parallel-processing">
      To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="optimize-waict-parallel-processing">optimize WAICT parallel processing</dfn>: 
@@ -1243,8 +1397,9 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     </ol>
    </div>
    <p>This minimizes the performance impact of WAICT integrity checks during page load.</p>
-   <h2 class="heading settled" data-level="6" id="privacy"><span class="secno">6. </span><span class="content">Privacy Considerations</span><a class="self-link" href="#privacy"></a></h2>
-   <h3 class="heading settled" data-level="6.1" id="privacy-verification"><span class="secno">6.1. </span><span class="content">Privacy-Preserving Verification</span><a class="self-link" href="#privacy-verification"></a></h3>
+   <h2 class="heading settled" data-level="7" id="privacy"><span class="secno">7. </span><span class="content">Privacy Considerations</span><a class="self-link" href="#privacy"></a></h2>
+   <div class="advisement"> Implementations MUST ensure that WAICT does not introduce new privacy risks. In particular, transparency verification should not require sending browsing history to third parties, and error reports should not include personal information. </div>
+   <h3 class="heading settled" data-level="7.1" id="privacy-verification"><span class="secno">7.1. </span><span class="content">Privacy-Preserving Verification</span><a class="self-link" href="#privacy-verification"></a></h3>
    <p>To preserve user privacy, WAICT transparency verification should:</p>
    <ol>
     <li data-md>
@@ -1254,7 +1409,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Use locally cached proofs and signatures whenever possible.</p>
    </ol>
-   <h3 class="heading settled" data-level="6.2" id="data-collection"><span class="secno">6.2. </span><span class="content">Data Collection</span><a class="self-link" href="#data-collection"></a></h3>
+   <div class="note" role="note"> Transparency verification can be performed by bundling necessary proofs with the manifest, rather than requiring additional network requests during verification. This approach preserves privacy while maintaining the security benefits of transparency. </div>
+   <h3 class="heading settled" data-level="7.2" id="data-collection"><span class="secno">7.2. </span><span class="content">Data Collection</span><a class="self-link" href="#data-collection"></a></h3>
    <p>WAICT should not introduce new privacy risks:</p>
    <ol>
     <li data-md>
@@ -1264,100 +1420,42 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Transparency verification should not reveal the user’s browsing history to third parties.</p>
    </ol>
-   <h2 class="heading settled" data-level="7" id="csp-directives"><span class="secno">7. </span><span class="content">Content Security Policy Directives</span><a class="self-link" href="#csp-directives"></a></h2>
-   <p>The WAICT specification defines the following CSP directives:</p>
-<pre>Content-Security-Policy:
-integrity-manifest-src 'url';
-integrity-manifest-hash 'hash';
-integrity-level-strict 'static';
-integrity-level-enforce 'script' 'style';
-integrity-level-report 'binary';
-integrity-enforcement-time timestamp-not-before timestamp-not-after;
-
-Content-Security-Policy-Report-Only:
-integrity-manifest-src 'url';
-integrity-manifest-hash 'hash';
-integrity-level-report 'script' 'style';
+   <div class="advisement"> When sending violation reports, implementations MUST NOT include any personal information or browsing history beyond what is strictly necessary to identify the resource that failed verification. </div>
+   <h2 class="heading settled" data-level="8" id="waict-header-examples"><span class="secno">8. </span><span class="content">WAICT Header Examples</span><a class="self-link" href="#waict-header-examples"></a></h2>
+   <div class="example" id="waict-basic-example">
+    <a class="self-link" href="#waict-basic-example"></a> An e-commerce site might use the following WAICT header to ensure strict verification of critical scripts while allowing for reporting of binary resources: 
+<pre>WAICT: integrity-manifest-src=https://shop.example.com/manifest.json;
+       integrity-manifest-hash=sha256-abcdef123456789;
+       integrity-level-strict=script;
+       integrity-level-enforce=static;
+       integrity-level-report=binary,style;
+       integrity-report-uri=https://shop.example.com/waict-reports
 </pre>
-   <h3 class="heading settled" data-level="7.1" id="manifest-directives"><span class="secno">7.1. </span><span class="content">Manifest Directives</span><a class="self-link" href="#manifest-directives"></a></h3>
-   <p>integrity-manifest-src</p>
-   <ul>
-    <li data-md>
-     <p><strong>'url'</strong>: The URL where the browser can fetch metadata about the manifest</p>
-   </ul>
-   <p>integrity-manifest-hash</p>
-   <ul>
-    <li data-md>
-     <p><strong>'hash'</strong>: The hex encoded hash of the manifest</p>
-   </ul>
-   <h3 class="heading settled" data-level="7.2" id="enforcement-level-directives"><span class="secno">7.2. </span><span class="content">Enforcement Level Directives</span><a class="self-link" href="#enforcement-level-directives"></a></h3>
-   <p>integrity-level-strict</p>
-   <ul>
-    <li data-md>
-     <p>Takes a space-separated list of resource types</p>
-    <li data-md>
-     <p>Resources of these types will not be loaded/unlocked into the page until they pass the integrity check</p>
-    <li data-md>
-     <p>Example: <code>integrity-level-strict 'static' 'script'</code></p>
-   </ul>
-   <p>integrity-level-enforce</p>
-   <ul>
-    <li data-md>
-     <p>Takes a space-separated list of resource types</p>
-    <li data-md>
-     <p>Resources of these types will be loaded but with notifications sent to users about check status</p>
-    <li data-md>
-     <p>Example: <code>integrity-level-enforce 'style' 'binary'</code></p>
-   </ul>
-   <p>integrity-level-report</p>
-   <ul>
-    <li data-md>
-     <p>Takes a space-separated list of resource types</p>
-    <li data-md>
-     <p>Resources of these types will be loaded with notifications only sent to developers</p>
-    <li data-md>
-     <p>Example: <code>integrity-level-report 'script' 'media'</code></p>
-   </ul>
-   <h3 class="heading settled" data-level="7.3" id="resource-types"><span class="secno">7.3. </span><span class="content">Resource Types</span><a class="self-link" href="#resource-types"></a></h3>
-   <p>The following resource types are supported:</p>
-   <ul>
-    <li data-md>
-     <p><strong>'script'</strong>: JavaScript files, workers, and other executable code</p>
-    <li data-md>
-     <p><strong>'style'</strong>: CSS stylesheets</p>
-    <li data-md>
-     <p><strong>'static'</strong>: HTML documents, iframes, and frames</p>
-    <li data-md>
-     <p><strong>'binary'</strong>: WASM, images, fonts, media files, etc.</p>
-   </ul>
-   <h3 class="heading settled" data-level="7.4" id="additional-directives"><span class="secno">7.4. </span><span class="content">Additional Directives</span><a class="self-link" href="#additional-directives"></a></h3>
-   <p>integrity-enforcement-time</p>
-   <ul>
-    <li data-md>
-     <p><strong>timestamp-not-before</strong>: The timestamp for the beginning of enforcement</p>
-    <li data-md>
-     <p><strong>timestamp-not-after</strong>: The timestamp for the end of enforcement</p>
-   </ul>
-   <h3 class="heading settled" data-level="7.5" id="optional-directives"><span class="secno">7.5. </span><span class="content">Optional Directives</span><a class="self-link" href="#optional-directives"></a></h3>
-   <p>integrity-page-hash</p>
-   <ul>
-    <li data-md>
-     <p><strong>'hash'</strong>: The hash of the page</p>
-    <li data-md>
-     <p>Avoids the roundtrip to get the manifest for resources bundled in the initial load</p>
-   </ul>
-   <p>integrity-resource-origin</p>
-   <ul>
-    <li data-md>
-     <p><strong>'self'</strong>: All resources from the manifest must be loaded from the same origin as the site</p>
-    <li data-md>
-     <p><strong>'remote-allowed'</strong>: Some sub-resources in the manifest can be loaded from different origins</p>
-   </ul>
-   <p>integrity-package-separator</p>
-   <ul>
-    <li data-md>
-     <p>**'\<some-package-delimiter>'**: Value used to delimit packages in bundled resources</some-package-delimiter></p>
-   </ul>
+   </div>
+   <h3 class="heading settled" data-level="8.1" id="basic-usage-example"><span class="secno">8.1. </span><span class="content">Basic Usage Example</span><a class="self-link" href="#basic-usage-example"></a></h3>
+<pre>WAICT: integrity-manifest-src=https://example.com/manifest.json;
+       integrity-manifest-hash=sha256-abcdef123456789;
+       integrity-level-strict=static,script;
+       integrity-level-enforce=style;
+       integrity-level-report=binary;
+       integrity-report-uri=https://example.com/waict-reports
+</pre>
+   <div class="note" role="note"> In this example, static HTML and JavaScript resources receive the highest level of protection, while style resources use a slightly weaker enforcement that still blocks malicious resources but with user notification. Binary resources are set to reporting-only mode during initial deployment. </div>
+   <h3 class="heading settled" data-level="8.2" id="report-only-example"><span class="secno">8.2. </span><span class="content">Report-Only Example</span><a class="self-link" href="#report-only-example"></a></h3>
+<pre>WAICT-Report-Only: integrity-manifest-src=https://example.com/manifest.json;
+                   integrity-manifest-hash=sha256-abcdef123456789;
+                   integrity-level-report=script,style,static,binary;
+                   integrity-report-uri=https://example.com/waict-reports
+</pre>
+   <div class="note" role="note"> The Report-Only mode is particularly useful for testing WAICT deployment before enabling enforcement. It allows sites to collect data on potential violations without affecting user experience, similar to CSP’s report-only mode. </div>
+   <h3 class="heading settled" data-level="8.3" id="time-limited-example"><span class="secno">8.3. </span><span class="content">Time-Limited Enforcement Example</span><a class="self-link" href="#time-limited-example"></a></h3>
+<pre>WAICT: integrity-manifest-src=https://example.com/manifest.json;
+       integrity-manifest-hash=sha256-abcdef123456789;
+       integrity-level-strict=static,script;
+       integrity-enforcement-time=not-before=2023-01-01T00:00:00Z,not-after=2023-12-31T23:59:59Z;
+       integrity-report-uri=https://example.com/waict-reports
+</pre>
+   <div class="example" id="example-e99f3e5a"><a class="self-link" href="#example-e99f3e5a"></a> This time-limited enforcement is useful for gradual rollouts or emergency response. For instance, a site might deploy strict enforcement only during business hours when engineers are available to respond to any issues, or schedule enforcement to begin after a planned deployment is complete. </div>
   </main>
   <div data-fill-with="conformance">
    <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
@@ -1390,24 +1488,18 @@ integrity-level-report 'script' 'style';
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
-   <li><a href="#handle-redirects-with-waict">handle redirects with WAICT</a><span>, in § 3.3</span>
-   <li><a href="#handle-service-workers-with-waict">handle service workers with WAICT</a><span>, in § 3.4</span>
-   <li><a href="#handle-waict-key-revocation">handle WAICT key revocation</a><span>, in § 4.3</span>
-   <li><a href="#optimize-waict-caching">optimize WAICT caching</a><span>, in § 5.1</span>
-   <li><a href="#optimize-waict-parallel-processing">optimize WAICT parallel processing</a><span>, in § 5.2</span>
-   <li><a href="#process-a-waict-manifest">process a WAICT manifest</a><span>, in § 2.1</span>
-   <li><a href="#process-waict-for-fetch">process WAICT for fetch</a><span>, in § 3.2</span>
-   <li><a href="#protect-against-waict-downgrades">protect against WAICT downgrades</a><span>, in § 4.2</span>
-   <li><a href="#report-a-waict-error">report a WAICT error</a><span>, in § 4.1</span>
-   <li><a href="#verify-waict-integrity">verify WAICT integrity</a><span>, in § 2.2</span>
+   <li><a href="#handle-redirects-with-waict">handle redirects with WAICT</a><span>, in § 4.3</span>
+   <li><a href="#handle-service-workers-with-waict">handle service workers with WAICT</a><span>, in § 4.4</span>
+   <li><a href="#optimize-waict-caching">optimize WAICT caching</a><span>, in § 6.1</span>
+   <li><a href="#optimize-waict-parallel-processing">optimize WAICT parallel processing</a><span>, in § 6.2</span>
+   <li><a href="#process-a-waict-manifest">process a WAICT manifest</a><span>, in § 3.1</span>
+   <li><a href="#process-waict-for-fetch">process WAICT for fetch</a><span>, in § 4.2</span>
+   <li><a href="#protect-against-waict-downgrades">protect against WAICT downgrades</a><span>, in § 5.2</span>
+   <li><a href="#report-a-waict-error">report a WAICT error</a><span>, in § 5.1</span>
+   <li><a href="#verify-waict-integrity">verify WAICT integrity</a><span>, in § 3.2</span>
   </ul>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
-   <li>
-    <a data-link-type="biblio">[CSP3]</a> defines the following terms:
-    <ul>
-     <li><span class="dfn-paneled" id="78b596f6">CSP list</span>
-    </ul>
    <li>
     <a data-link-type="biblio">[DOM]</a> defines the following terms:
     <ul>
@@ -1436,8 +1528,6 @@ integrity-level-report 'script' 'style';
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
-   <dt id="biblio-csp3">[CSP3]
-   <dd>Mike West; Antonio Sartori. <a href="https://w3c.github.io/webappsec-csp/"><cite>Content Security Policy Level 3</cite></a>. URL: <a href="https://w3c.github.io/webappsec-csp/">https://w3c.github.io/webappsec-csp/</a>
    <dt id="biblio-dom">[DOM]
    <dd>Anne van Kesteren. <a href="https://dom.spec.whatwg.org/"><cite>DOM Standard</cite></a>. Living Standard. URL: <a href="https://dom.spec.whatwg.org/">https://dom.spec.whatwg.org/</a>
    <dt id="biblio-fetch">[FETCH]
@@ -1647,29 +1737,27 @@ function parseHTML(markup) {
 "use strict";
 {
 let dfnPanelData = {
-"168f1b6e": {"dfnID":"168f1b6e","dfnText":"global object","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-realm-global"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-realm-global\u2460"}],"title":"3.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-realm-global\u2461"}],"title":"3.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-realm-global\u2462"}],"title":"4.1. Report WAICT Error"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-realm-global"},
-"3349d69f": {"dfnID":"3349d69f","dfnText":"associated Document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document-window"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-document-window\u2460"}],"title":"3.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-document-window\u2461"}],"title":"3.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-document-window\u2462"}],"title":"4.1. Report WAICT Error"}],"url":"https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window"},
-"3ae34c95": {"dfnID":"3ae34c95","dfnText":"destination","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-destination"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request-destination\u2460"}],"title":"3.2. Process WAICT for Fetch"}],"url":"https://fetch.spec.whatwg.org/#concept-request-destination"},
-"55213b5b": {"dfnID":"55213b5b","dfnText":"request","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request\u2460"}],"title":"3.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-request\u2461"}],"title":"4.1. Report WAICT Error"}],"url":"https://fetch.spec.whatwg.org/#concept-request"},
-"78b596f6": {"dfnID":"78b596f6","dfnText":"CSP list","external":true,"refSections":[{"refs":[{"id":"ref-for-csp-list"},{"id":"ref-for-csp-list\u2460"},{"id":"ref-for-csp-list\u2461"},{"id":"ref-for-csp-list\u2462"},{"id":"ref-for-csp-list\u2463"},{"id":"ref-for-csp-list\u2464"}],"title":"2.1. Process WAICT Manifest"},{"refs":[{"id":"ref-for-csp-list\u2465"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-csp-list\u2466"}],"title":"4.1. Report WAICT Error"},{"refs":[{"id":"ref-for-csp-list\u2467"}],"title":"4.2. Protect Against WAICT Downgrades"}],"url":"https://w3c.github.io/webappsec-csp/#csp-list"},
-"81a76425": {"dfnID":"81a76425","dfnText":"body","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-response-body"}],"title":"2.2. Verify WAICT Integrity"}],"url":"https://fetch.spec.whatwg.org/#concept-response-body"},
-"857d5516": {"dfnID":"857d5516","dfnText":"client","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-client"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request-client\u2460"},{"id":"ref-for-concept-request-client\u2461"}],"title":"3.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-request-client\u2462"}],"title":"3.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-request-client\u2463"}],"title":"4.1. Report WAICT Error"}],"url":"https://fetch.spec.whatwg.org/#concept-request-client"},
-"a973e0fe": {"dfnID":"a973e0fe","dfnText":"document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document"}],"title":"2.1. Process WAICT Manifest"},{"refs":[{"id":"ref-for-concept-document\u2460"}],"title":"3.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-document\u2461"}],"title":"4.2. Protect Against WAICT Downgrades"}],"url":"https://dom.spec.whatwg.org/#concept-document"},
-"c62cd7cf": {"dfnID":"c62cd7cf","dfnText":"origin","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document-origin"},{"id":"ref-for-concept-document-origin\u2460"}],"title":"4.2. Protect Against WAICT Downgrades"}],"url":"https://dom.spec.whatwg.org/#concept-document-origin"},
-"d053bfb5": {"dfnID":"d053bfb5","dfnText":"worker","external":true,"refSections":[{"refs":[{"id":"ref-for-md-vcard-rel-co-worker"}],"title":"3.1. Extended Main Fetch Algorithm"}],"url":"https://html.spec.whatwg.org/multipage/microdata.html#md-vcard-rel-co-worker"},
-"dc1cd39b": {"dfnID":"dc1cd39b","dfnText":"URL","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-url"},{"id":"ref-for-concept-request-url\u2460"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request-url\u2461"},{"id":"ref-for-concept-request-url\u2462"}],"title":"3.2. Process WAICT for Fetch"}],"url":"https://fetch.spec.whatwg.org/#concept-request-url"},
-"e0dfd35e": {"dfnID":"e0dfd35e","dfnText":"main fetch","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-main-fetch"},{"id":"ref-for-concept-main-fetch\u2460"}],"title":"3.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-main-fetch\u2461"}],"title":"3.3. Handle Redirects with WAICT"}],"url":"https://fetch.spec.whatwg.org/#concept-main-fetch"},
-"ee7bba09": {"dfnID":"ee7bba09","dfnText":"response","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-response"}],"title":"2.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-response\u2460"}],"title":"3.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-response\u2461"}],"title":"4.1. Report WAICT Error"}],"url":"https://fetch.spec.whatwg.org/#concept-response"},
+"168f1b6e": {"dfnID":"168f1b6e","dfnText":"global object","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-realm-global"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-realm-global\u2460"}],"title":"4.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-realm-global\u2461"}],"title":"4.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-realm-global\u2462"}],"title":"5.1. Report WAICT Error"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-realm-global"},
+"3349d69f": {"dfnID":"3349d69f","dfnText":"associated Document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document-window"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-document-window\u2460"}],"title":"4.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-document-window\u2461"}],"title":"4.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-document-window\u2462"}],"title":"5.1. Report WAICT Error"}],"url":"https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window"},
+"3ae34c95": {"dfnID":"3ae34c95","dfnText":"destination","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-destination"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request-destination\u2460"}],"title":"4.2. Process WAICT for Fetch"}],"url":"https://fetch.spec.whatwg.org/#concept-request-destination"},
+"55213b5b": {"dfnID":"55213b5b","dfnText":"request","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request\u2460"}],"title":"4.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-request\u2461"}],"title":"5.1. Report WAICT Error"}],"url":"https://fetch.spec.whatwg.org/#concept-request"},
+"81a76425": {"dfnID":"81a76425","dfnText":"body","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-response-body"}],"title":"3.2. Verify WAICT Integrity"}],"url":"https://fetch.spec.whatwg.org/#concept-response-body"},
+"857d5516": {"dfnID":"857d5516","dfnText":"client","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-client"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request-client\u2460"},{"id":"ref-for-concept-request-client\u2461"}],"title":"4.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-request-client\u2462"}],"title":"4.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-request-client\u2463"}],"title":"5.1. Report WAICT Error"}],"url":"https://fetch.spec.whatwg.org/#concept-request-client"},
+"a973e0fe": {"dfnID":"a973e0fe","dfnText":"document","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document"}],"title":"3.1. Process WAICT Manifest"},{"refs":[{"id":"ref-for-concept-document\u2460"}],"title":"4.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-document\u2461"}],"title":"5.2. Protect Against WAICT Downgrades"}],"url":"https://dom.spec.whatwg.org/#concept-document"},
+"c62cd7cf": {"dfnID":"c62cd7cf","dfnText":"origin","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-document-origin"},{"id":"ref-for-concept-document-origin\u2460"}],"title":"5.2. Protect Against WAICT Downgrades"}],"url":"https://dom.spec.whatwg.org/#concept-document-origin"},
+"d053bfb5": {"dfnID":"d053bfb5","dfnText":"worker","external":true,"refSections":[{"refs":[{"id":"ref-for-md-vcard-rel-co-worker"}],"title":"4.1. Extended Main Fetch Algorithm"}],"url":"https://html.spec.whatwg.org/multipage/microdata.html#md-vcard-rel-co-worker"},
+"dc1cd39b": {"dfnID":"dc1cd39b","dfnText":"URL","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request-url"},{"id":"ref-for-concept-request-url\u2460"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-request-url\u2461"},{"id":"ref-for-concept-request-url\u2462"}],"title":"4.2. Process WAICT for Fetch"}],"url":"https://fetch.spec.whatwg.org/#concept-request-url"},
+"e0dfd35e": {"dfnID":"e0dfd35e","dfnText":"main fetch","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-main-fetch"},{"id":"ref-for-concept-main-fetch\u2460"}],"title":"4.1. Extended Main Fetch Algorithm"},{"refs":[{"id":"ref-for-concept-main-fetch\u2461"}],"title":"4.3. Handle Redirects with WAICT"}],"url":"https://fetch.spec.whatwg.org/#concept-main-fetch"},
+"ee7bba09": {"dfnID":"ee7bba09","dfnText":"response","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-response"}],"title":"3.2. Verify WAICT Integrity"},{"refs":[{"id":"ref-for-concept-response\u2460"}],"title":"4.2. Process WAICT for Fetch"},{"refs":[{"id":"ref-for-concept-response\u2461"}],"title":"5.1. Report WAICT Error"}],"url":"https://fetch.spec.whatwg.org/#concept-response"},
 "handle-redirects-with-waict": {"dfnID":"handle-redirects-with-waict","dfnText":"handle redirects with WAICT","external":false,"refSections":[],"url":"#handle-redirects-with-waict"},
 "handle-service-workers-with-waict": {"dfnID":"handle-service-workers-with-waict","dfnText":"handle service workers with WAICT","external":false,"refSections":[],"url":"#handle-service-workers-with-waict"},
-"handle-waict-key-revocation": {"dfnID":"handle-waict-key-revocation","dfnText":"handle WAICT key revocation","external":false,"refSections":[],"url":"#handle-waict-key-revocation"},
 "optimize-waict-caching": {"dfnID":"optimize-waict-caching","dfnText":"optimize WAICT caching","external":false,"refSections":[],"url":"#optimize-waict-caching"},
 "optimize-waict-parallel-processing": {"dfnID":"optimize-waict-parallel-processing","dfnText":"optimize WAICT parallel processing","external":false,"refSections":[],"url":"#optimize-waict-parallel-processing"},
 "process-a-waict-manifest": {"dfnID":"process-a-waict-manifest","dfnText":"process a WAICT manifest","external":false,"refSections":[],"url":"#process-a-waict-manifest"},
-"process-waict-for-fetch": {"dfnID":"process-waict-for-fetch","dfnText":"process WAICT for fetch","external":false,"refSections":[{"refs":[{"id":"ref-for-process-waict-for-fetch"}],"title":"3.1. Extended Main Fetch Algorithm"}],"url":"#process-waict-for-fetch"},
+"process-waict-for-fetch": {"dfnID":"process-waict-for-fetch","dfnText":"process WAICT for fetch","external":false,"refSections":[{"refs":[{"id":"ref-for-process-waict-for-fetch"}],"title":"4.1. Extended Main Fetch Algorithm"}],"url":"#process-waict-for-fetch"},
 "protect-against-waict-downgrades": {"dfnID":"protect-against-waict-downgrades","dfnText":"protect against WAICT downgrades","external":false,"refSections":[],"url":"#protect-against-waict-downgrades"},
 "report-a-waict-error": {"dfnID":"report-a-waict-error","dfnText":"report a WAICT error","external":false,"refSections":[],"url":"#report-a-waict-error"},
-"verify-waict-integrity": {"dfnID":"verify-waict-integrity","dfnText":"verify WAICT integrity","external":false,"refSections":[{"refs":[{"id":"ref-for-verify-waict-integrity"}],"title":"3.2. Process WAICT for Fetch"}],"url":"#verify-waict-integrity"},
+"verify-waict-integrity": {"dfnID":"verify-waict-integrity","dfnText":"verify WAICT integrity","external":false,"refSections":[{"refs":[{"id":"ref-for-verify-waict-integrity"}],"title":"4.2. Process WAICT for Fetch"}],"url":"#verify-waict-integrity"},
 };
 
 document.addEventListener("DOMContentLoaded", ()=>{
@@ -2072,7 +2160,6 @@ let refsData = {
 "https://html.spec.whatwg.org/multipage/microdata.html#md-vcard-rel-co-worker": {"displayText":"worker","export":false,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"worker","type":"dfn","url":"https://html.spec.whatwg.org/multipage/microdata.html#md-vcard-rel-co-worker"},
 "https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window": {"displayText":"associated Document","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"associated document","type":"dfn","url":"https://html.spec.whatwg.org/multipage/nav-history-apis.html#concept-document-window"},
 "https://html.spec.whatwg.org/multipage/webappapis.html#concept-realm-global": {"displayText":"global object","export":true,"for_":["realm"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"global object","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-realm-global"},
-"https://w3c.github.io/webappsec-csp/#csp-list": {"displayText":"CSP list","export":true,"for_":[],"level":"3","normative":true,"shortname":"csp","spec":"csp3","status":"current","text":"csp list","type":"dfn","url":"https://w3c.github.io/webappsec-csp/#csp-list"},
 };
 
 function mkRefHint(link, ref) {
